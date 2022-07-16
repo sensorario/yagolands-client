@@ -26,7 +26,6 @@ connection.addEventListener('message', e => {
 });
 
 connection.addEventListener('message', e => {
-    if (JSON.parse(e.data).type === 'undefined') {
         let numberOfClients = JSON.parse(e.data).numberOfClients;
         let numberOfVillages = JSON.parse(e.data).numberOfVillages;
         let numberOfFields = JSON.parse(e.data).numberOfFields;
@@ -41,7 +40,6 @@ connection.addEventListener('message', e => {
         divOfVillages.innerHTML = numberOfVillages;
         divOfFields.innerHTML = numberOfFields;
         divOfSeconds.innerHTML = seconds;
-    }
 })
 
 function updateClock() {
