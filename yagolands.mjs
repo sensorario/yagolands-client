@@ -5,29 +5,43 @@ const connection = new WebSocket('ws://localhost:12345'),
 
 let savedTime = 0;
 
+const bottone = document.querySelector('#build_castello');
+bottone.addEventListener('click', () => console.log('clicked'));
+bottone.addEventListener('click', () => {
+    if (connection.readyState === WebSocket.OPEN) {
+        connection.send(JSON.stringify({
+            text: 'build_castello',
+            to: to.value
+        }));
+    } else {
+        console.error('not connected');
+    }
+});
+
 connection.addEventListener('message', e => {
     savedTime = JSON.parse(e.data).rawseconds;
+    if (JSON.parse(e.data).type === 'build_castello') {
+        secondiAllaFine = JSON.parse(e.data).secondiAllaFine;
+    }
 });
 
 connection.addEventListener('message', e => {
-    console.log(e.data);
-});
+    if (JSON.parse(e.data).type === 'undefined') {
+        let numberOfClients = JSON.parse(e.data).numberOfClients;
+        let numberOfVillages = JSON.parse(e.data).numberOfVillages;
+        let numberOfFields = JSON.parse(e.data).numberOfFields;
+        let seconds = JSON.parse(e.data).seconds;
 
-connection.addEventListener('message', e => {
-    let numberOfClients = JSON.parse(e.data).numberOfClients;
-    let numberOfVillages = JSON.parse(e.data).numberOfVillages;
-    let numberOfFields = JSON.parse(e.data).numberOfFields;
-    let seconds = JSON.parse(e.data).seconds;
+        let divOfClients = document.querySelector('.numberOfClients');
+        let divOfVillages = document.querySelector('.numberOfVillages');
+        let divOfFields = document.querySelector('.numberOfFields');
+        let divOfSeconds = document.querySelector('.seconds');
 
-    let divOfClients = document.querySelector('.numberOfClients');
-    let divOfVillages = document.querySelector('.numberOfVillages');
-    let divOfFields = document.querySelector('.numberOfFields');
-    let divOfSeconds = document.querySelector('.seconds');
-
-    divOfClients.innerHTML = numberOfClients;
-    divOfVillages.innerHTML = numberOfVillages;
-    divOfFields.innerHTML = numberOfFields;
-    divOfSeconds.innerHTML = seconds;
+        divOfClients.innerHTML = numberOfClients;
+        divOfVillages.innerHTML = numberOfVillages;
+        divOfFields.innerHTML = numberOfFields;
+        divOfSeconds.innerHTML = seconds;
+    }
 })
 
 function updateClock() {
@@ -65,4 +79,4 @@ function messaggio() {
     }));
 };
 
-setTimeout(() => { messaggio(); }, 500);
+setTimeout(() => { messaggio(); }, 1000);

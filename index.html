@@ -9,14 +9,22 @@
             numberOfVillages: <span class="numberOfVillages">0</span><br />
             numberOfFields: <span class="numberOfFields">0</span><br />
             seconds: <span class="seconds">00h:00m:00s</span><br />
+            <div class="countdown-wrapper">
+                seconds to complete the building:
+                <span class="countdown">00h:00m:00s</span><br />
+            </div>
         </div>
 
-        <input id="msg" type="hidden" />
-        <input placeholder="to" id="to" type="hidden" />
+        <input id="msg" type="text" />
+        <input placeholder="to" id="to" type="text" />
 
         <script type="module" src="yagolands.mjs"></script>
+        <script type="module" src="countdown.mjs"></script>
+
+        <button id="build_castello">costruisci castello</button>
+
         <script type="text/javascript">
-            console.log('it works');
+            let secondiAllaFine = 3;
         </script>
     </body>
 </html>
