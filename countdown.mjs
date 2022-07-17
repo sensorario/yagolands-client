@@ -11,13 +11,11 @@ function updateCountDown() {
 
 function checkVisibility() {
     if (secondiAllaFine <= 0) {
-        document
-            .querySelector('.countdown-wrapper')
-            .style.visibility = 'hidden';
+        document.querySelector('.countdown-wrapper').style.visibility = 'hidden';
+        document.querySelector('.possible_constructions').style.visibility = 'visible';
     } else {
-        document
-            .querySelector('.countdown-wrapper')
-            .style.visibility = 'visible';
+        document.querySelector('.countdown-wrapper').style.visibility = 'visible';
+        document.querySelector('.possible_constructions').style.visibility = 'hidden';
     }
 }
 

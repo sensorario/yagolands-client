@@ -6,8 +6,9 @@ const connection = new WebSocket('ws://localhost:12345'),
 let savedTime = 0;
 
 const bottone = document.querySelector('#build_castello');
-bottone.addEventListener('click', () => console.log('clicked'));
-bottone.addEventListener('click', () => {
+bottone.addEventListener('click', event => {
+    event.target.style.visibility = 'hidden';
+
     if (connection.readyState === WebSocket.OPEN) {
         connection.send(JSON.stringify({
             text: 'build_castello',
