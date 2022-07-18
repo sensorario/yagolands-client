@@ -23,11 +23,22 @@ connection.addEventListener('message', e => {
     savedTime = JSON.parse(e.data).rawseconds;
     if (JSON.parse(e.data).type === 'build_castello') {
         secondiAllaFine = JSON.parse(e.data).secondiAllaFine;
+
+        // @todo refactor here
+        // recupero info della fine
+        // calcolo i secondi per il countdown
+        let queue = JSON.parse(e.data).queue;
+        console.log(queue);
+        let adesso = new Date();
+        let fine = new Date(queue.rawFinish);
+        secondiAllaFine = Math.round(
+            (fine.getTime() - adesso.getTime())
+            / 1000
+        );
     }
 });
 
 connection.addEventListener('message', e => {
-    console.log(JSON.parse(e.data).tree);
 
     let numberOfClients = JSON.parse(e.data).numberOfClients;
     let numberOfVillages = JSON.parse(e.data).numberOfVillages;
@@ -74,10 +85,7 @@ function send (data) {
 }
 
 function messaggio() {
-    send(JSON.stringify({
-        text: 'bottone',
-        to: 'all'
-    }));
+    send(JSON.stringify({ text: 'bottone', to: 'all' }));
 };
 
 setTimeout(() => { messaggio(); }, 1000);
