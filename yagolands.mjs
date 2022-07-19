@@ -16,7 +16,6 @@ connection.addEventListener('message', e => {
     let available = ['build_castle', 'build_warehouse', 'build_windmill']
     if (available.includes(JSON.parse(e.data).type)) {
         secondiAllaFine = JSON.parse(e.data).secondiAllaFine;
-        console.log('secondiAllaFine', secondiAllaFine)
 
         // @todo refactor here
         // recupero info della fine
@@ -72,7 +71,6 @@ connection.addEventListener('message', e => {
     let buttons = document.querySelectorAll('[data-button="builder"]');
     buttons.forEach(button => {
         button.addEventListener('click', event => {
-            console.log(event.target.dataset.action);
              if (connection.readyState === WebSocket.OPEN) {
                  connection.send(JSON.stringify({
                      text: event.target.dataset.action,
@@ -86,14 +84,6 @@ connection.addEventListener('message', e => {
         });
     });
 
-
-
-    let table = JSON.parse(e.data).tree.table;
-    for (let t = 0; t < table.length; t++) {
-        console.log(table[t]);
-    }
-
-    console.log('costruire un qualche html e mandarlo nel posto ghiusto ... ');
     buildingsRendered = true;
 });
 
