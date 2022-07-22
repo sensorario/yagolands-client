@@ -1,0 +1,8 @@
+* {
+    font-family: Verdana;
+}
+
+li.stat-item {
+    list-style: none;
+    display: contents;
+}

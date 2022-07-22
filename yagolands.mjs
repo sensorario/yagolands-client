@@ -4,30 +4,90 @@ const connection = new WebSocket('ws://localhost:12345'),
     msg = document.getElementById('msg');
 
 let savedTime = 0;
+let buildingsRendered = false;
 
-const bottone = document.querySelector('#build_castello');
-bottone.addEventListener('click', event => {
-    event.target.style.visibility = 'hidden';
-
-    if (connection.readyState === WebSocket.OPEN) {
-        connection.send(JSON.stringify({
-            text: 'build_castello',
-            to: to.value
-        }));
-    } else {
-        console.error('not connected');
-    }
-});
+function hideButtons() {
+    let buttons = document.querySelectorAll('[data-button="builder"]');
+    buttons.forEach(button => button.style.visibility = 'hidden');
+}
 
 connection.addEventListener('message', e => {
     savedTime = JSON.parse(e.data).rawseconds;
-    if (JSON.parse(e.data).type === 'build_castello') {
+    let available = ['build_castle', 'build_warehouse', 'build_windmill']
+    if (available.includes(JSON.parse(e.data).type)) {
         secondiAllaFine = JSON.parse(e.data).secondiAllaFine;
+
+        // @todo refactor here
+        // recupero info della fine
+        // calcolo i secondi per il countdown
+        let queue = JSON.parse(e.data).queue;
+        let adesso = new Date();
+        let fine = new Date(queue.rawFinish);
+        secondiAllaFine = Math.round(
+            (fine.getTime() - adesso.getTime())
+            / 1000
+        );
     }
 });
 
 connection.addEventListener('message', e => {
-    console.log(JSON.parse(e.data).tree);
+    if (buildingsRendered === true) {
+        return ;
+    }
+
+    // recupero il mio client id
+    let myYid = JSON.parse(e.data).id;
+    console.log('current client id:', myYid);
+
+    // resource
+    let res = JSON.parse(e.data).tree.buildings;
+    let schede = [];
+    for (let r = 0; r < res.length; r++) {
+        if (!schede.includes(res[r])) {
+            schede[res[r].name] = res[r].building.res;
+        }
+    }
+
+
+    // renderizzo edifici e risorse
+    let container = document.querySelector('[data-content="tree-info"]')
+    let buildings = JSON.parse(e.data).buildings;
+    for(let b = 0; b < buildings.length; b++) {
+        let divBuilding = document.createElement('li')
+        let divButtonBuild = document.createElement('button')
+        divButtonBuild.dataset.button = 'builder';
+        divButtonBuild.dataset.action = 'build_' + buildings[b].name;
+        divBuilding.textContent = buildings[b].name
+        divButtonBuild.textContent = 'enhance_' + buildings[b].name;
+        let resources = schede[buildings[b].name];
+        for(let r = 0; r < resources.length; r++) {
+            let resName = resources[r].name;
+            let resAmount = resources[r].amount;
+            divBuilding.dataset[resName] = resAmount;
+        }
+        divBuilding.appendChild(divButtonBuild)
+        container.appendChild(divBuilding);
+    }
+    let buttons = document.querySelectorAll('[data-button="builder"]');
+    buttons.forEach(button => {
+        button.addEventListener('click', event => {
+             if (connection.readyState === WebSocket.OPEN) {
+                 connection.send(JSON.stringify({
+                     text: event.target.dataset.action,
+                     to: to.value
+                 }));
+                 hideButtons();
+
+             } else {
+                 console.error('not connected');
+             }
+        });
+    });
+
+    buildingsRendered = true;
+});
+
+connection.addEventListener('message', e => {
 
     let numberOfClients = JSON.parse(e.data).numberOfClients;
     let numberOfVillages = JSON.parse(e.data).numberOfVillages;
@@ -74,10 +134,7 @@ function send (data) {
 }
 
 function messaggio() {
-    send(JSON.stringify({
-        text: 'bottone',
-        to: 'all'
-    }));
+    send(JSON.stringify({ text: 'bottone', to: 'all' }));
 };
 
 setTimeout(() => { messaggio(); }, 1000);

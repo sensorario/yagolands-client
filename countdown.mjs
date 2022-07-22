@@ -9,13 +9,17 @@ function updateCountDown() {
     }
 }
 
+function showButtons() {
+    let buttons = document.querySelectorAll('[data-button="builder"]');
+    buttons.forEach(button => button.style.visibility = 'visible');
+}
+
 function checkVisibility() {
     if (secondiAllaFine <= 0) {
         document.querySelector('.countdown-wrapper').style.visibility = 'hidden';
-        document.querySelector('.possible_constructions').style.visibility = 'visible';
+        showButtons();
     } else {
         document.querySelector('.countdown-wrapper').style.visibility = 'visible';
-        document.querySelector('.possible_constructions').style.visibility = 'hidden';
     }
 }
 
