@@ -13,7 +13,12 @@ function hideButtons() {
 
 connection.addEventListener('message', e => {
     savedTime = JSON.parse(e.data).rawseconds;
-    let available = ['build_castle', 'build_warehouse', 'build_windmill']
+    let available = [
+        'build_castle',
+        'build_warehouse',
+        'build_windmill',
+        'build_barracks',
+    ];
     if (available.includes(JSON.parse(e.data).type)) {
         secondiAllaFine = JSON.parse(e.data).secondiAllaFine;
 
@@ -27,6 +32,8 @@ connection.addEventListener('message', e => {
             (fine.getTime() - adesso.getTime())
             / 1000
         );
+    } else {
+        console.error('action', JSON.parse(e.data).type, 'not in', available);
     }
 });
 
