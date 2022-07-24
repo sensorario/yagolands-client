@@ -45,6 +45,7 @@ connection.addEventListener('message', e => {
     // recupero il mio client id
     let myYid = JSON.parse(e.data).id;
     console.log('current client id:', myYid);
+    document.querySelector('#yid').value = myYid;
 
     // resource
     let res = JSON.parse(e.data).tree.buildings;
@@ -79,9 +80,11 @@ connection.addEventListener('message', e => {
     buttons.forEach(button => {
         button.addEventListener('click', event => {
              if (connection.readyState === WebSocket.OPEN) {
+                 let yid = document.querySelector('#yid').value;
                  connection.send(JSON.stringify({
                      text: event.target.dataset.action,
-                     to: to.value
+                     to: yid,
+                     yid: yid,
                  }));
                  hideButtons();
 
@@ -141,7 +144,7 @@ function send (data) {
 }
 
 function messaggio() {
-    send(JSON.stringify({ text: 'bottone', to: 'all' }));
+    send(JSON.stringify({ text: 'connection-call', to: 'all' }));
 };
 
 setTimeout(() => { messaggio(); }, 1000);
