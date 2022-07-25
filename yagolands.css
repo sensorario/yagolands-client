@@ -16,3 +16,7 @@ ul.statistics {
     margin: 10px;
     height: 20px;
 }
+
+li.stat-item:first-child {
+    color: white;
+}
