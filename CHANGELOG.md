@@ -6,3 +6,4 @@
  - hide button to build while building is under construction
  - add missing makefile
  - add fastify as server
+ - styled statistics and countdown
