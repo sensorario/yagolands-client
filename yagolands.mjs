@@ -12,14 +12,24 @@ function hideButtons() {
 }
 
 connection.addEventListener('message', e => {
+    let message = JSON.parse(e.data);
+    let type = message.type;
+    if (message.type === 'error_message') {
+        alert(message.message);
+    }
+});
+
+connection.addEventListener('message', e => {
+    let type = JSON.parse(e.data).type;
     savedTime = JSON.parse(e.data).rawseconds;
+    // @todo each building in the tree enable a build_<T> action
     let available = [
         'build_castle',
         'build_warehouse',
         'build_windmill',
         'build_barracks',
     ];
-    if (available.includes(JSON.parse(e.data).type)) {
+    if (available.includes(type)) {
         secondiAllaFine = JSON.parse(e.data).secondiAllaFine;
 
         // @todo refactor here
@@ -32,8 +42,6 @@ connection.addEventListener('message', e => {
             (fine.getTime() - adesso.getTime())
             / 1000
         );
-    } else {
-        console.error('action', JSON.parse(e.data).type, 'not in', available);
     }
 });
 
@@ -85,6 +93,7 @@ connection.addEventListener('message', e => {
                      text: event.target.dataset.action,
                      to: yid,
                      yid: yid,
+                     position: 42,
                  }));
                  hideButtons();
 
