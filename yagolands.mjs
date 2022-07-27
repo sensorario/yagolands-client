@@ -61,19 +61,23 @@ connection.addEventListener('message', e => {
     let container = document.querySelector('[data-content="tree-info"]')
     let buildings = JSON.parse(e.data).buildings;
     for(let b = 0; b < buildings.length; b++) {
+
         let divBuilding = document.createElement('li')
-        let divButtonBuild = document.createElement('button')
-        divButtonBuild.dataset.button = 'builder';
-        divButtonBuild.dataset.action = 'build_' + buildings[b].name;
         divBuilding.textContent = buildings[b].name
-        divButtonBuild.textContent = 'enhance_' + buildings[b].name;
+
         let resources = schede[buildings[b].name];
         for(let r = 0; r < resources.length; r++) {
             let resName = resources[r].name;
             let resAmount = resources[r].amount;
             divBuilding.dataset[resName] = resAmount;
         }
+
+        let divButtonBuild = document.createElement('button')
+        divButtonBuild.dataset.button = 'builder';
+        divButtonBuild.dataset.action = 'build_' + buildings[b].name;
+        divButtonBuild.textContent = 'migliora';
         divBuilding.appendChild(divButtonBuild)
+
         container.appendChild(divBuilding);
     }
     let buttons = document.querySelectorAll('[data-button="builder"]');

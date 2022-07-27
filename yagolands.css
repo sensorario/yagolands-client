@@ -6,3 +6,29 @@ li.stat-item {
     list-style: none;
     display: contents;
 }
+
+ul.statistics {
+    background-color: brown;
+    border-color: gold;
+    border-width: 1px;
+    border-style: dotted;
+    padding: 10px;
+    margin: 10px;
+    height: 20px;
+}
+
+li.stat-item:first-child {
+    color: white;
+}
+
+.countdown-wrapper {
+    background-color: brown;
+    border-color: gold;
+    border-width: 1px;
+    border-style: dotted;
+    padding: 10px;
+    margin: 10px;
+    height: 20px;
+    position: absolute;
+    bottom: 20px;
+}
