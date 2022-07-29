@@ -20,11 +20,8 @@ connection.addEventListener('message', e => {
         'build_barracks',
     ];
     if (available.includes(JSON.parse(e.data).type)) {
+        console.log('improve building');
         secondiAllaFine = JSON.parse(e.data).secondiAllaFine;
-
-        // @todo refactor here
-        // recupero info della fine
-        // calcolo i secondi per il countdown
         let queue = JSON.parse(e.data).queue;
         let adesso = new Date();
         let fine = new Date(queue.rawFinish);
@@ -32,19 +29,22 @@ connection.addEventListener('message', e => {
             (fine.getTime() - adesso.getTime())
             / 1000
         );
-    } else {
-        console.error('action', JSON.parse(e.data).type, 'not in', available);
+        queueOfStuff.push(() => {
+            let yid = document.querySelector('#yid').value;
+            connection.send(JSON.stringify({
+                text: 'refresh_buildings',
+                yid: yid,
+                to: yid,
+            }));
+        })
     }
 });
 
 connection.addEventListener('message', e => {
-    if (buildingsRendered === true) {
-        return ;
-    }
+    if (buildingsRendered === true) { return }
 
     // recupero il mio client id
     let myYid = JSON.parse(e.data).id;
-    console.log('current client id:', myYid);
     document.querySelector('#yid').value = myYid;
 
     // resource
@@ -72,10 +72,17 @@ connection.addEventListener('message', e => {
             divBuilding.dataset[resName] = resAmount;
         }
 
+        let divBuildingLevel = document.createElement('div');
+        divBuildingLevel.classList.add('building-level');
+        divBuildingLevel.dataset.building = buildings[b].name;
+        divBuildingLevel.textContent = '0';
+
         let divButtonBuild = document.createElement('button')
         divButtonBuild.dataset.button = 'builder';
         divButtonBuild.dataset.action = 'build_' + buildings[b].name;
         divButtonBuild.textContent = 'migliora';
+
+        divBuilding.appendChild(divBuildingLevel)
         divBuilding.appendChild(divButtonBuild)
 
         container.appendChild(divBuilding);
@@ -102,6 +109,22 @@ connection.addEventListener('message', e => {
 });
 
 connection.addEventListener('message', e => {
+    let message = JSON.parse(e.data);
+    // update al building levels
+    let available = [
+        'build_castle',
+        'build_warehouse',
+        'build_windmill',
+        'build_barracks',
+    ];
+    if (!available.includes(message.type)) {
+        for(let q in message.queue) {
+            let data = '[data-building="'+message.queue[q].name+'"]';
+            let div = document.querySelector(data);
+            div.textContent = message.queue[q].level;
+        }
+    }
+    
 
     let numberOfClients = JSON.parse(e.data).numberOfClients;
     let numberOfVillages = JSON.parse(e.data).numberOfVillages;
