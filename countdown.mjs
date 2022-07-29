@@ -17,6 +17,12 @@ function showButtons() {
 function checkVisibility() {
     if (secondiAllaFine <= 0) {
         document.querySelector('.countdown-wrapper').style.visibility = 'hidden';
+        if (queueOfStuff.length > 0) {
+            for (let qof in queueOfStuff) {
+                let fun = queueOfStuff.pop();
+                fun();
+            } 
+        }
         showButtons();
     } else {
         document.querySelector('.countdown-wrapper').style.visibility = 'visible';
