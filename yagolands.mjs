@@ -96,6 +96,7 @@ connection.addEventListener('message', e => {
                      text: event.target.dataset.action,
                      to: yid,
                      yid: yid,
+                     position: 42,
                  }));
                  hideButtons();
 
@@ -106,6 +107,11 @@ connection.addEventListener('message', e => {
     });
 
     buildingsRendered = true;
+});
+
+connection.addEventListener('message', e => {
+    let message = JSON.parse(e.data);
+    console.log(message);
 });
 
 connection.addEventListener('message', e => {
