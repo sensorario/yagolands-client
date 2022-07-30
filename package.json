@@ -10,7 +10,9 @@
   "description": "This is just a very very very simple client created just to interact with the server that you can find here:",
   "version": "1.0.0",
   "main": "server.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "prettier": "^2.7.1"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sensorario/yagolands-client.git"
