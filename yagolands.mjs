@@ -8,40 +8,36 @@ let buildingsRendered = false;
 
 function hideButtons() {
     let buttons = document.querySelectorAll('[data-button="builder"]');
-    buttons.forEach(button => button.style.visibility = 'hidden');
+    buttons.forEach(button => (button.style.visibility = 'hidden'));
 }
 
 connection.addEventListener('message', e => {
     savedTime = JSON.parse(e.data).rawseconds;
-    let available = [
-        'build_castle',
-        'build_warehouse',
-        'build_windmill',
-        'build_barracks',
-    ];
+    let available = ['build_castle', 'build_warehouse', 'build_windmill', 'build_barracks'];
     if (available.includes(JSON.parse(e.data).type)) {
         console.log('improve building');
         secondiAllaFine = JSON.parse(e.data).secondiAllaFine;
         let queue = JSON.parse(e.data).queue;
         let adesso = new Date();
         let fine = new Date(queue.rawFinish);
-        secondiAllaFine = Math.round(
-            (fine.getTime() - adesso.getTime())
-            / 1000
-        );
+        secondiAllaFine = Math.round((fine.getTime() - adesso.getTime()) / 1000);
         queueOfStuff.push(() => {
             let yid = document.querySelector('#yid').value;
-            connection.send(JSON.stringify({
-                text: 'refresh_buildings',
-                yid: yid,
-                to: yid,
-            }));
-        })
+            connection.send(
+                JSON.stringify({
+                    text: 'refresh_buildings',
+                    yid: yid,
+                    to: yid
+                })
+            );
+        });
     }
 });
 
 connection.addEventListener('message', e => {
-    if (buildingsRendered === true) { return }
+    if (buildingsRendered === true) {
+        return;
+    }
 
     // recupero il mio client id
     let myYid = JSON.parse(e.data).id;
@@ -56,17 +52,15 @@ connection.addEventListener('message', e => {
         }
     }
 
-
     // renderizzo edifici e risorse
-    let container = document.querySelector('[data-content="tree-info"]')
+    let container = document.querySelector('[data-content="tree-info"]');
     let buildings = JSON.parse(e.data).buildings;
-    for(let b = 0; b < buildings.length; b++) {
-
-        let divBuilding = document.createElement('li')
-        divBuilding.textContent = buildings[b].name
+    for (let b = 0; b < buildings.length; b++) {
+        let divBuilding = document.createElement('li');
+        divBuilding.textContent = buildings[b].name;
 
         let resources = schede[buildings[b].name];
-        for(let r = 0; r < resources.length; r++) {
+        for (let r = 0; r < resources.length; r++) {
             let resName = resources[r].name;
             let resAmount = resources[r].amount;
             divBuilding.dataset[resName] = resAmount;
@@ -77,32 +71,33 @@ connection.addEventListener('message', e => {
         divBuildingLevel.dataset.building = buildings[b].name;
         divBuildingLevel.textContent = '0';
 
-        let divButtonBuild = document.createElement('button')
+        let divButtonBuild = document.createElement('button');
         divButtonBuild.dataset.button = 'builder';
         divButtonBuild.dataset.action = 'build_' + buildings[b].name;
         divButtonBuild.textContent = 'migliora';
 
-        divBuilding.appendChild(divBuildingLevel)
-        divBuilding.appendChild(divButtonBuild)
+        divBuilding.appendChild(divBuildingLevel);
+        divBuilding.appendChild(divButtonBuild);
 
         container.appendChild(divBuilding);
     }
     let buttons = document.querySelectorAll('[data-button="builder"]');
     buttons.forEach(button => {
         button.addEventListener('click', event => {
-             if (connection.readyState === WebSocket.OPEN) {
-                 let yid = document.querySelector('#yid').value;
-                 connection.send(JSON.stringify({
-                     text: event.target.dataset.action,
-                     to: yid,
-                     yid: yid,
-                     position: 42,
-                 }));
-                 hideButtons();
-
-             } else {
-                 console.error('not connected');
-             }
+            if (connection.readyState === WebSocket.OPEN) {
+                let yid = document.querySelector('#yid').value;
+                connection.send(
+                    JSON.stringify({
+                        text: event.target.dataset.action,
+                        to: yid,
+                        yid: yid,
+                        position: 42
+                    })
+                );
+                hideButtons();
+            } else {
+                console.error('not connected');
+            }
         });
     });
 
@@ -117,20 +112,14 @@ connection.addEventListener('message', e => {
 connection.addEventListener('message', e => {
     let message = JSON.parse(e.data);
     // update al building levels
-    let available = [
-        'build_castle',
-        'build_warehouse',
-        'build_windmill',
-        'build_barracks',
-    ];
+    let available = ['build_castle', 'build_warehouse', 'build_windmill', 'build_barracks'];
     if (!available.includes(message.type)) {
-        for(let q in message.queue) {
-            let data = '[data-building="'+message.queue[q].name+'"]';
+        for (let q in message.queue) {
+            let data = '[data-building="' + message.queue[q].name + '"]';
             let div = document.querySelector(data);
             div.textContent = message.queue[q].level;
         }
     }
-    
 
     let numberOfClients = JSON.parse(e.data).numberOfClients;
     let numberOfVillages = JSON.parse(e.data).numberOfVillages;
@@ -146,7 +135,7 @@ connection.addEventListener('message', e => {
     divOfVillages.innerHTML = numberOfVillages;
     divOfFields.innerHTML = numberOfFields;
     divOfSeconds.innerHTML = seconds;
-})
+});
 
 function updateClock() {
     document.querySelector('.seconds').innerHTML = clock(++savedTime);
@@ -158,17 +147,19 @@ updateClock();
 msg.addEventListener('keydown', e => {
     let kc = e.which || e.keyCode;
     if (kc === 13) {
-        let to = document.getElementById('to')
-        send(JSON.stringify({
-            text: msg.value,
-            to: to.value
-        }));
+        let to = document.getElementById('to');
+        send(
+            JSON.stringify({
+                text: msg.value,
+                to: to.value
+            })
+        );
         msg.value = '';
         to.value = '';
     }
-})
+});
 
-function send (data) {
+function send(data) {
     if (connection.readyState === WebSocket.OPEN) {
         connection.send(data);
     } else {
@@ -178,6 +169,8 @@ function send (data) {
 
 function messaggio() {
     send(JSON.stringify({ text: 'connection-call', to: 'all' }));
-};
+}
 
-setTimeout(() => { messaggio(); }, 1000);
+setTimeout(() => {
+    messaggio();
+}, 1000);

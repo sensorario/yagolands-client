@@ -3,15 +3,13 @@ import clock from './modules/clock.mjs';
 function updateCountDown() {
     const seconds = --secondiAllaFine;
     if (secondiAllaFine >= 0) {
-        document
-            .querySelector('.countdown')
-            .innerHTML = clock(secondiAllaFine);
+        document.querySelector('.countdown').innerHTML = clock(secondiAllaFine);
     }
 }
 
 function showButtons() {
     let buttons = document.querySelectorAll('[data-button="builder"]');
-    buttons.forEach(button => button.style.visibility = 'visible');
+    buttons.forEach(button => (button.style.visibility = 'visible'));
 }
 
 function checkVisibility() {
@@ -21,7 +19,7 @@ function checkVisibility() {
             for (let qof in queueOfStuff) {
                 let fun = queueOfStuff.pop();
                 fun();
-            } 
+            }
         }
         showButtons();
     } else {
