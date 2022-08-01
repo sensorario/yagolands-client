@@ -32,3 +32,15 @@ li.stat-item:first-child {
     position: absolute;
     bottom: 20px;
 }
+
+.building-list {
+    display: flex;
+}
+
+.building-item {
+    border-width: 1px;
+    border-style: dotted;
+    margin: 2px;
+    border-radius: 5px;
+    padding: 10px;
+}
