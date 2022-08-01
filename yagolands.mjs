@@ -16,7 +16,6 @@ connection.addEventListener('message', e => {
     savedTime = JSON.parse(e.data).rawseconds;
     let available = ['build_castle', 'build_warehouse', 'build_windmill', 'build_barracks'];
     if (available.includes(JSON.parse(e.data).type)) {
-        console.log('improve building');
         secondiAllaFine = JSON.parse(e.data).secondiAllaFine;
         let queue = JSON.parse(e.data).queue;
         let adesso = new Date();
@@ -122,12 +121,6 @@ connection.addEventListener('message', e => {
 
 connection.addEventListener('message', e => {
     let message = JSON.parse(e.data);
-    console.log(message);
-});
-
-connection.addEventListener('message', e => {
-    let message = JSON.parse(e.data);
-    // console.log('@@@@', );
 
     // @todo sarebbe meglio avere gli edifici gia filtrati
     let distincts = new Array();
@@ -151,7 +144,6 @@ connection.addEventListener('message', e => {
             let div = document.querySelector(data);
             div.textContent = message.queue[q].level;
 
-            console.log('>>', distincts[buildingName]);
             // aggiorno il numero di risorse necessarie
             let ressss = ['iron', 'wood', 'clay', 'grain'];
             for (let r in ressss) {
@@ -159,13 +151,9 @@ connection.addEventListener('message', e => {
                 let divBuilding = document.querySelector(dataBuilding);
                 // @todo sostituire 22 con il valore iniziale reale dell-edificio
                 let res = distincts[buildingName][ressss[r]];
-                console.log(message.queue[q].level)
                 divBuilding.textContent = ressss[r] + ': ' + timing(res, message.queue[q].level + 1);
             }
         }
-    } else {
-        // message.tree.buildings
-        // console.log('@@@#!@#@!');
     }
 
     let numberOfClients = JSON.parse(e.data).numberOfClients;
