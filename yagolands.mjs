@@ -209,3 +209,9 @@ function messaggio() {
 setTimeout(() => {
     messaggio();
 }, 1000);
+
+const buttonToolbar = document.querySelector('div#toolbar button');
+buttonToolbar.addEventListener('click', event => {
+    event.target.parentElement.parentElement.classList.toggle('visible');
+    event.target.parentElement.parentElement.classList.toggle('reduced');
+});

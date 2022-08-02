@@ -13,11 +13,6 @@
             <li class="stat-item">seconds: <span class="seconds">00h:00m:00s</span></li>
         </ul>
 
-        <div class="yid-container">
-            <lable for="yid">yid:</lable>
-            <input type="text" id="yid" name="yid" />
-        </div>
-
         <div class="countdown-wrapper" style="">
             seconds to complete the building:
             <span class="countdown">00h:00m:00s</span>
@@ -27,6 +22,16 @@
 
         <input id="msg" type="hidden" />
         <input placeholder="to" id="to" type="hidden" />
+
+        <div id="toolbar" class="visible">
+            <div class="yid-container">
+                <lable for="yid">yid:</lable>
+                <input type="text" id="yid" name="yid" />
+            </div>
+            <div class="actions">
+                <button>toggle</button>
+            </div>
+        </div>
 
         <script type="module" src="yagolands.mjs"></script>
         <script type="module" src="countdown.mjs"></script>
