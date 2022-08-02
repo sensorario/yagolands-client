@@ -13,6 +13,8 @@ let connection = new WebSocket('ws://localhost:12345');
 let msg = document.getElementById('msg');
 let buildingsRendered = false;
 let secondsFromTheBeginning = 0;
+let available = [];
+let ressss = [];
 
 function time() {
     secondsFromTheBeginning++;
@@ -20,8 +22,6 @@ function time() {
         document.querySelector('.countdown').innerHTML = clock().clock(secondiAllaFine);
     }
     document.querySelector('.seconds').innerHTML = clock().clock(secondsFromTheBeginning);
-    console.log('secondiAllaFine:', secondiAllaFine);
-    console.log('secondiAllaFine:', secondsFromTheBeginning);
     setTimeout(() => time(), 1000);
 }
 
@@ -46,7 +46,6 @@ msg.addEventListener('keydown', e => {
 // .. listeners
 connection.addEventListener('message', e => {
     let message = JSON.parse(e.data);
-    let available = ['build_castle', 'build_warehouse', 'build_windmill', 'build_barracks'];
     if (available.includes(message.type)) {
         events.emit('construction_requested', { type: message.type, secondiAllaFine: secondiAllaFine, queue: message.queue });
         queueOfStuff.push(() => { events.emit('construction_completed', yid); });
@@ -74,7 +73,6 @@ events.on('something_happened', message => {
     }
 
     // update al building levels
-    let available = ['build_castle', 'build_warehouse', 'build_windmill', 'build_barracks'];
     if (!available.includes(message.type)) {
         for (let q in message.queue) {
             let buildingName = message.queue[q].name;
@@ -83,7 +81,6 @@ events.on('something_happened', message => {
             div.textContent = message.queue[q].level;
 
             // aggiorno il numero di risorse necessarie
-            let ressss = ['iron', 'wood', 'clay', 'grain'];
             for (let r in ressss) {
                 let dataBuilding = '[data-id="' + message.queue[q].name + '-'+ressss[r]+'"]';
                 let divBuilding = document.querySelector(dataBuilding);
@@ -110,6 +107,11 @@ events.on('something_happened', message => {
     divOfVillages.innerHTML = numberOfVillages;
     divOfFields.innerHTML = numberOfFields;
     divOfSeconds.innerHTML = clock().clock(secondsFromTheBeginning);
+});
+
+events.on('construction_requested', message => {
+    let buttons = document.querySelectorAll('[data-button="builder"]');
+    buttons.forEach(button => (button.style.visibility = 'hidden'));
 });
 
 events.on('construction_requested', message => {
@@ -141,6 +143,17 @@ events.on('coundown_completed', () => {
 
 events.on('connection_started', message => {
     if (buildingsRendered === true) { return; }
+
+    for(let r in message.tree.buildings[0].building.res) {
+        ressss.push(message.tree.buildings[0].building.res[r].name);
+    }
+
+    for(let b in message.buildings) {
+        let buildingName = message.buildings[b].name;
+        let action = 'build_' + buildingName;
+        available.push(action);
+    }
+
     ui().render(message);
 
     let buttons = document.querySelectorAll('[data-button="builder"]');

@@ -8,8 +8,6 @@ function updateCountDown() {
         document.querySelector('.countdown').innerHTML = clock()
             .clock(secondiAllaFine);
     }
-
-    console.log(secondiAllaFine)
 }
 
 function checkVisibility() {
