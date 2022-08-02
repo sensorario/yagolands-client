@@ -12,6 +12,20 @@ let queueOfStuff = new Array();
 let connection = new WebSocket('ws://localhost:12345');
 let msg = document.getElementById('msg');
 let buildingsRendered = false;
+let secondsFromTheBeginning = 0;
+
+function time() {
+    secondsFromTheBeginning++;
+    if (--secondiAllaFine >= 0) {
+        document.querySelector('.countdown').innerHTML = clock().clock(secondiAllaFine);
+    }
+    document.querySelector('.seconds').innerHTML = clock().clock(secondsFromTheBeginning);
+    console.log('secondiAllaFine:', secondiAllaFine);
+    console.log('secondiAllaFine:', secondsFromTheBeginning);
+    setTimeout(() => time(), 1000);
+}
+
+time();
 
 // non dovrebbero esistere piu' form ... 
 msg.addEventListener('keydown', e => {
@@ -90,10 +104,12 @@ events.on('something_happened', message => {
     let divOfFields = document.querySelector('.numberOfFields');
     let divOfSeconds = document.querySelector('.seconds');
 
+    secondsFromTheBeginning = message.rawseconds;
+
     divOfClients.innerHTML = numberOfClients;
     divOfVillages.innerHTML = numberOfVillages;
     divOfFields.innerHTML = numberOfFields;
-    divOfSeconds.innerHTML = seconds;
+    divOfSeconds.innerHTML = clock().clock(secondsFromTheBeginning);
 });
 
 events.on('construction_requested', message => {

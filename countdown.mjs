@@ -5,8 +5,11 @@ const events = eventi();
 
 function updateCountDown() {
     if (--secondiAllaFine >= 0) {
-        document.querySelector('.countdown').innerHTML = clock(secondiAllaFine);
+        document.querySelector('.countdown').innerHTML = clock()
+            .clock(secondiAllaFine);
     }
+
+    console.log(secondiAllaFine)
 }
 
 function checkVisibility() {
