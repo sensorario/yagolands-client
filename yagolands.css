@@ -51,20 +51,43 @@ li.stat-item:first-child {
     padding: 10px;
 }
 
+div#toolbar div {
+    margin: 10px;
+}
+
 div#toolbar {
     display: flex;
     flex-direction: row;
     gap: 10px;
     position: absolute;
-    padding: 10px;
     background: brown;
     position: absolute;
     bottom: 0;
+    right: 0;
     width: 100%;
+    border-color: white;
+    border-width: 1px 0px 0px 1px;
+    border-style: double;
+    animation-name: expand;
+    animation-duration: 0.2s;
+    height: 40px;
+    overflow: hidden;
 }
 
 div#toolbar.reduced {
     right: 0;
-    width: 300px;
+    width: 350px;
     border-top-left-radius: 15px;
+    animation-name: example;
+    animation-duration: 0.2s;
+}
+
+@keyframes example {
+  from { width: 100%; }
+  to { width: 300px; }
+}
+
+@keyframes expand {
+  from { width: 300px; }
+  to { width: 100%; }
 }
