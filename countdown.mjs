@@ -4,8 +4,7 @@ import eventi from './modules/eventi/eventi.js';
 const events = eventi();
 
 function updateCountDown() {
-    const seconds = --secondiAllaFine;
-    if (secondiAllaFine >= 0) {
+    if (--secondiAllaFine >= 0) {
         document.querySelector('.countdown').innerHTML = clock(secondiAllaFine);
     }
 }
