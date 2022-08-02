@@ -1,5 +1,5 @@
-export default (start, level, somma = 0) => {
+export default function calcolo(start, level, somma = 0) {
     return level === 1
         ? start
-        : parseInt(f(start, level - 1, somma) * 1.3);
+        : parseInt(calcolo(start, level - 1, somma) * 1.3);
 };

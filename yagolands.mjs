@@ -21,6 +21,9 @@ connection.addEventListener('message', e => {
         let adesso = new Date();
         let fine = new Date(queue.rawFinish);
         secondiAllaFine = Math.round((fine.getTime() - adesso.getTime()) / 1000);
+
+        // al termine della costruzione, .. viene andato un messaggio
+        // al server per richiedere che venga aggiornato il client
         queueOfStuff.push(() => {
             let yid = document.querySelector('#yid').value;
             connection.send(
