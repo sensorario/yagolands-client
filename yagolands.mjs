@@ -1,121 +1,96 @@
+// imports
 import clock from './modules/clock.mjs';
 import timing from './modules/timing.mjs';
+import eventi from './modules/eventi/eventi.js';
+import ui from './modules/ui/ui.js';
 
-const connection = new WebSocket('ws://localhost:12345'),
-    msg = document.getElementById('msg');
+// ...
+const events = eventi();
 
-let savedTime = 0;
+// ... 
+let queueOfStuff = new Array();
+let connection = new WebSocket('ws://localhost:12345');
+let msg = document.getElementById('msg');
 let buildingsRendered = false;
+
+// non dovrebbero esistere piu' form ... 
+msg.addEventListener('keydown', e => {
+    let kc = e.which || e.keyCode;
+    if (kc === 13) {
+        let to = document.getElementById('to');
+        send(
+            JSON.stringify({
+                text: msg.value,
+                to: to.value
+            })
+        );
+        msg.value = '';
+        to.value = '';
+    }
+});
+
+// .. listeners
+connection.addEventListener('message', e => {
+    let message = JSON.parse(e.data);
+    let available = ['build_castle', 'build_warehouse', 'build_windmill', 'build_barracks'];
+    if (available.includes(message.type)) {
+        events.emit('construction_requested', { type: message.type, secondiAllaFine: secondiAllaFine, queue: message.queue });
+        queueOfStuff.push(() => { events.emit('construction_completed', yid); });
+    }
+
+    if (typeof message.message != 'undefined') {
+        events.emit('connection_started', message);
+    }
+});
+
+events.on('construction_requested', message => {
+    let fine = new Date(message.queue.rawFinish);
+    secondiAllaFine = Math.round((fine.getTime() - (new Date()).getTime()) / 1000);
+});
+
+events.on('construction_completed', message => {
+    connection.send(JSON.stringify({
+        text: 'refresh_buildings',
+        yid: message.yid,
+        to: message.yid,
+    }));
+});
+
+events.on('coundown_completed', () => {
+    let buttons = document.querySelectorAll('[data-button="builder"]');
+    buttons.forEach(button => (button.style.visibility = 'visible'));
+});
+
+events.on('coundown_completed', () => {
+    if (queueOfStuff.length > 0) {
+        for (let qof in queueOfStuff) {
+            queueOfStuff.pop()();
+        }
+    }
+});
+
 
 function hideButtons() {
     let buttons = document.querySelectorAll('[data-button="builder"]');
     buttons.forEach(button => (button.style.visibility = 'hidden'));
 }
 
-connection.addEventListener('message', e => {
-    savedTime = JSON.parse(e.data).rawseconds;
-    let available = ['build_castle', 'build_warehouse', 'build_windmill', 'build_barracks'];
-    if (available.includes(JSON.parse(e.data).type)) {
-        secondiAllaFine = JSON.parse(e.data).secondiAllaFine;
-        let queue = JSON.parse(e.data).queue;
-        let adesso = new Date();
-        let fine = new Date(queue.rawFinish);
-        secondiAllaFine = Math.round((fine.getTime() - adesso.getTime()) / 1000);
+events.on('connection_started', message => {
+    if (buildingsRendered === true) { return; }
+    ui().render(message);
 
-        // al termine della costruzione, .. viene andato un messaggio
-        // al server per richiedere che venga aggiornato il client
-        queueOfStuff.push(() => {
-            let yid = document.querySelector('#yid').value;
-            connection.send(
-                JSON.stringify({
-                    text: 'refresh_buildings',
-                    yid: yid,
-                    to: yid
-                })
-            );
-        });
-    }
-});
-
-connection.addEventListener('message', e => {
-    if (buildingsRendered === true) {
-        return;
-    }
-
-    // recupero il mio client id
-    let myYid = JSON.parse(e.data).id;
-    document.querySelector('#yid').value = myYid;
-
-    // resource
-    let res = JSON.parse(e.data).tree.buildings;
-    let schede = [];
-    for (let r = 0; r < res.length; r++) {
-        if (!schede.includes(res[r])) {
-            schede[res[r].name] = res[r].building.res;
-        }
-    }
-
-    // renderizzo edifici e risorse
-    let container = document.querySelector('[data-content="tree-info"]');
-    let buildings = JSON.parse(e.data).buildings;
-    for (let b = 0; b < buildings.length; b++) {
-        let divBuilding = document.createElement('div');
-        divBuilding.classList.add('building-item');
-        divBuilding.textContent = buildings[b].name;
-
-        let divResources = new Array();
-        let resources = schede[buildings[b].name];
-        for (let r = 0; r < resources.length; r++) {
-            let resName = resources[r].name;
-            let resAmount = resources[r].amount;
-            let newDivRes = document.createElement('div');
-            newDivRes.classList.add('resource');
-            newDivRes.dataset.id = buildings[b].name +'-'+ resName;
-            newDivRes.textContent = resName +': '+ resAmount;
-            divBuilding.appendChild(newDivRes);
-
-            divBuilding.dataset[resName] = resAmount;
-        }
-
-        // livello edificio
-        let divBuildingLevel = document.createElement('span');
-        divBuildingLevel.classList.add('building-level');
-        divBuildingLevel.dataset.building = buildings[b].name;
-        divBuildingLevel.textContent = '0';
-
-        let divBuildingLevelContainer = document.createElement('div');
-        divBuildingLevelContainer.classList.add('building-level-container');
-        divBuildingLevelContainer.textContent = 'current level: ';
-        divBuildingLevelContainer.appendChild(divBuildingLevel);
-
-        // per costruire
-        let divButtonBuild = document.createElement('button');
-        divButtonBuild.dataset.button = 'builder';
-        divButtonBuild.dataset.action = 'build_' + buildings[b].name;
-        divButtonBuild.textContent = 'migliora';
-
-        divBuilding.appendChild(divBuildingLevelContainer);
-        divBuilding.appendChild(divButtonBuild);
-
-        container.appendChild(divBuilding);
-    }
     let buttons = document.querySelectorAll('[data-button="builder"]');
     buttons.forEach(button => {
         button.addEventListener('click', event => {
-            if (connection.readyState === WebSocket.OPEN) {
-                let yid = document.querySelector('#yid').value;
-                connection.send(
-                    JSON.stringify({
-                        text: event.target.dataset.action,
-                        to: yid,
-                        yid: yid,
-                        position: 42
-                    })
-                );
-                hideButtons();
-            } else {
-                console.error('not connected');
-            }
+            let yid = document.querySelector('#yid').value;
+            connection.send(
+                JSON.stringify({
+                    text: event.target.dataset.action,
+                    to: yid,
+                    yid: yid,
+                    position: 42
+                })
+            );
         });
     });
 
@@ -175,28 +150,6 @@ connection.addEventListener('message', e => {
     divOfSeconds.innerHTML = seconds;
 });
 
-function updateClock() {
-    document.querySelector('.seconds').innerHTML = clock(++savedTime);
-    setTimeout(() => updateClock(), 1000);
-}
-
-updateClock();
-
-msg.addEventListener('keydown', e => {
-    let kc = e.which || e.keyCode;
-    if (kc === 13) {
-        let to = document.getElementById('to');
-        send(
-            JSON.stringify({
-                text: msg.value,
-                to: to.value
-            })
-        );
-        msg.value = '';
-        to.value = '';
-    }
-});
-
 function send(data) {
     if (connection.readyState === WebSocket.OPEN) {
         connection.send(data);
@@ -209,9 +162,7 @@ function messaggio() {
     send(JSON.stringify({ text: 'connection-call', to: 'all' }));
 }
 
-setTimeout(() => {
-    messaggio();
-}, 1000);
+setTimeout(() => { messaggio(); }, 1000);
 
 const buttonToolbar = document.querySelector('div#toolbar button');
 buttonToolbar.addEventListener('click', event => {

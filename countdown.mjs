@@ -1,4 +1,7 @@
 import clock from './modules/clock.mjs';
+import eventi from './modules/eventi/eventi.js';
+
+const events = eventi();
 
 function updateCountDown() {
     const seconds = --secondiAllaFine;
@@ -7,21 +10,10 @@ function updateCountDown() {
     }
 }
 
-function showButtons() {
-    let buttons = document.querySelectorAll('[data-button="builder"]');
-    buttons.forEach(button => (button.style.visibility = 'visible'));
-}
-
 function checkVisibility() {
     if (secondiAllaFine <= 0) {
         document.querySelector('.countdown-wrapper').style.visibility = 'hidden';
-        if (queueOfStuff.length > 0) {
-            for (let qof in queueOfStuff) {
-                let fun = queueOfStuff.pop();
-                fun();
-            }
-        }
-        showButtons();
+        events.emit('coundown_completed');
     } else {
         document.querySelector('.countdown-wrapper').style.visibility = 'visible';
     }
