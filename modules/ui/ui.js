@@ -1,57 +1,73 @@
-let render = message => {
-    let myYid = message.id;
-    document.querySelector('#yid').value = myYid;
+let newDivResource = dto => {
+    let div = document.createElement('div');
+    div.classList.add('resource');
+    div.dataset.id = dto.buildingName +'-'+ dto.resourceName;
+    div.textContent = dto.resourceName +': '+ dto.resourceAmount;
+    return div;
+};
 
-    // resource
+let buildBuildingButton = dto => {
+    let div = document.createElement('button');
+    div.dataset.button = 'builder';
+    div.dataset.action = 'build_' + dto.name;
+    div.textContent = 'migliora';
+    return div;
+};
+
+let buildContainer = child => {
+    let div = document.createElement('div');
+    div.classList.add('building-level-container');
+    div.textContent = 'current level: ';
+    div.appendChild(child);
+    return div;
+};
+
+let buildLevel = dto => {
+    let div = document.createElement('span');
+    div.classList.add('building-level');
+    div.dataset.building = dto.name;
+    div.textContent = '0';
+    return div;
+};
+
+let resourcesGrid = message => {
     let res = message.tree.buildings;
-    let schede = [];
+    let map = [];
     for (let r = 0; r < res.length; r++) {
-        if (!schede.includes(res[r])) {
-            schede[res[r].name] = res[r].building.res;
+        if (!map.includes(res[r])) {
+            map[res[r].name] = res[r].building.res;
         }
     }
+    return map;
+};
 
-    // renderizzo edifici e risorse
+let render = message => {
+    document.querySelector('#yid').value = message.id;
+
+    let resourceMap = resourcesGrid(message);
     let container = document.querySelector('[data-content="tree-info"]');
-    let buildings = message.buildings;
-    for (let b = 0; b < buildings.length; b++) {
+
+    for (let b = 0; b < message.buildings.length; b++) {
+        let buildingName = message.buildings[b].name;
+
         let divBuilding = document.createElement('div');
         divBuilding.classList.add('building-item');
-        divBuilding.textContent = buildings[b].name;
+        divBuilding.textContent = buildingName
 
-        let divResources = new Array();
-        let resources = schede[buildings[b].name];
-        for (let r = 0; r < resources.length; r++) {
-            let resName = resources[r].name;
-            let resAmount = resources[r].amount;
-            let newDivRes = document.createElement('div');
-            newDivRes.classList.add('resource');
-            newDivRes.dataset.id = buildings[b].name +'-'+ resName;
-            newDivRes.textContent = resName +': '+ resAmount;
-            divBuilding.appendChild(newDivRes);
-            divBuilding.dataset[resName] = resAmount;
+        let buildingResources = resourceMap[buildingName];
+        for (let r = 0; r < buildingResources.length; r++) {
+            let dto = {
+                resourceName: buildingResources[r].name,
+                resourceAmount: buildingResources[r].amount,
+                buildingName: buildingName,
+            };
+
+            divBuilding.appendChild(newDivResource(dto));
+            divBuilding.dataset[dto.resourceName] = dto.resourceAmountt;
         }
 
-        // livello edificio
-        let divBuildingLevel = document.createElement('span');
-        divBuildingLevel.classList.add('building-level');
-        divBuildingLevel.dataset.building = buildings[b].name;
-        divBuildingLevel.textContent = '0';
-
-        let divBuildingLevelContainer = document.createElement('div');
-        divBuildingLevelContainer.classList.add('building-level-container');
-        divBuildingLevelContainer.textContent = 'current level: ';
-        divBuildingLevelContainer.appendChild(divBuildingLevel);
-
-        // per costruire
-        let divButtonBuild = document.createElement('button');
-        divButtonBuild.dataset.button = 'builder';
-        divButtonBuild.dataset.action = 'build_' + buildings[b].name;
-        divButtonBuild.textContent = 'migliora';
-
-        divBuilding.appendChild(divBuildingLevelContainer);
-        divBuilding.appendChild(divButtonBuild);
-
+        divBuilding.appendChild(buildContainer(buildLevel(buildingName)));
+        divBuilding.appendChild(buildBuildingButton({ name: buildingName }));
         container.appendChild(divBuilding);
     }
 };
