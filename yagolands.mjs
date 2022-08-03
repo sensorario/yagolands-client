@@ -160,14 +160,8 @@ events.on('connection_started', message => {
     buttons.forEach(button => {
         button.addEventListener('click', event => {
             let yid = document.querySelector('#yid').value;
-            connection.send(
-                JSON.stringify({
-                    text: event.target.dataset.action,
-                    to: yid,
-                    yid: yid,
-                    position: 42
-                })
-            );
+            let dto = { text: event.target.dataset.action, to: yid, yid: yid, position: 42 };
+            connection.send(JSON.stringify(data));
         });
     });
 

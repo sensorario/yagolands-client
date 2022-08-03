@@ -7,3 +7,6 @@
  - add missing makefile
  - add fastify as server
  - styled statistics and countdown
+ - building and resources dynamic
+ - toolbar for developer
+ - show only building that are buildable
