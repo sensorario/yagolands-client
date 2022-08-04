@@ -7,10 +7,14 @@ let newDivResource = dto => {
 };
 
 let buildBuildingButton = dto => {
+    let iTools = document.createElement('em');
+    iTools.textContent = '🛠';
+
     let div = document.createElement('button');
     div.dataset.button = 'builder';
     div.dataset.action = 'build_' + dto.name;
     div.textContent = 'migliora';
+    div.appendChild(iTools);
     return div;
 };
 

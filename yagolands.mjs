@@ -1,6 +1,6 @@
 // imports
 import clock from './modules/clock/clock.mjs';
-import timing from './modules/timing.mjs';
+import timing from './modules/timing/timing.mjs';
 import eventi from './modules/eventi/eventi.js';
 import ui from './modules/ui/ui.js';
 
