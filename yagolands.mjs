@@ -161,7 +161,7 @@ events.on('connection_started', message => {
         button.addEventListener('click', event => {
             let yid = document.querySelector('#yid').value;
             let dto = { text: event.target.dataset.action, to: yid, yid: yid, position: 42 };
-            connection.send(JSON.stringify(data));
+            connection.send(JSON.stringify(dto));
         });
     });
 
