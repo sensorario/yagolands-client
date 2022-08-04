@@ -13,7 +13,7 @@ let buildBuildingButton = dto => {
     let div = document.createElement('button');
     div.dataset.button = 'builder';
     div.dataset.action = 'build_' + dto.name;
-    div.textContent = 'migliora';
+    div.textContent = 'improve';
     div.appendChild(iTools);
     return div;
 };
