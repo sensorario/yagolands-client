@@ -1,4 +1,4 @@
-import clock from './modules/clock.mjs';
+import clock from './modules/clock/clock.mjs';
 import eventi from './modules/eventi/eventi.js';
 
 const events = eventi();
