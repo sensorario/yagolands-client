@@ -67,7 +67,6 @@ let render = message => {
             };
 
             divBuilding.appendChild(newDivResource(dto));
-            divBuilding.dataset[dto.resourceName] = dto.resourceAmountt;
         }
 
         divBuilding.appendChild(buildContainer(buildLevel({ name: buildingName })));
