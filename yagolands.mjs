@@ -103,7 +103,6 @@ events.on('something_happened', message => {
                 let res = distincts[buildingName][ressss[r]];
                 divBuilding.textContent = ressss[r] + ': ' + timing(res, message.queue[q].level + 1);
             }
-
         }
     }
 
