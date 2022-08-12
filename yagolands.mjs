@@ -59,25 +59,21 @@ connection.addEventListener('message', e => {
 });
 
 events.on('something_happened', message => {
-    console.log(message)
     // @todo sarebbe meglio avere gli edifici gia filtrati
 
-    //setTimeout(() => {
-        for(let v in message.visibilities) {
-            let buildingName = message.visibilities[v].name;
-            let visible = message.visibilities[v].visible;
-            let data = '[data-building-name="' + buildingName + '"]';
-            if (document.querySelector(data) != null)
-            if (visible === false) {
-                document.querySelector(data).classList.add('hidden');
-                document.querySelector(data).classList.remove('visible');
-            } else {
-                document.querySelector(data).classList.remove('hidden');
-                document.querySelector(data).classList.add('visible');
-            }
+    for(let v in message.visibilities) {
+        let buildingName = message.visibilities[v].name;
+        let visible = message.visibilities[v].visible;
+        let data = '[data-building-name="' + buildingName + '"]';
+        if (document.querySelector(data) != null)
+        if (visible === false) {
+            document.querySelector(data).classList.add('hidden');
+            document.querySelector(data).classList.remove('visible');
+        } else {
+            document.querySelector(data).classList.remove('hidden');
+            document.querySelector(data).classList.add('visible');
         }
-    //}, 2000);
-
+    }
 
     let distincts = new Array();
     if (typeof message.tree != 'undefined') {
