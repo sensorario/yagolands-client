@@ -56,6 +56,7 @@ let render = message => {
 
         let divBuilding = document.createElement('div');
         divBuilding.classList.add('building-item');
+        divBuilding.dataset.buildingName = buildingName;
         divBuilding.textContent = buildingName
 
         let buildingResources = resourceMap[buildingName];

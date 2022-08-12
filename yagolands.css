@@ -40,6 +40,14 @@ li.stat-item:first-child {
     display: flex;
 }
 
+.building-item.hidden {
+    visibility: hidden;
+    position: absolute;
+}
+.building-item.visible button {
+    visibility: visible;
+}
+
 .building-item {
     border-width: 1px;
     border-style: dotted;

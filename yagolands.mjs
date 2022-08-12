@@ -59,7 +59,26 @@ connection.addEventListener('message', e => {
 });
 
 events.on('something_happened', message => {
+    console.log(message)
     // @todo sarebbe meglio avere gli edifici gia filtrati
+
+    //setTimeout(() => {
+        for(let v in message.visibilities) {
+            let buildingName = message.visibilities[v].name;
+            let visible = message.visibilities[v].visible;
+            let data = '[data-building-name="' + buildingName + '"]';
+            if (document.querySelector(data) != null)
+            if (visible === false) {
+                document.querySelector(data).classList.add('hidden');
+                document.querySelector(data).classList.remove('visible');
+            } else {
+                document.querySelector(data).classList.remove('hidden');
+                document.querySelector(data).classList.add('visible');
+            }
+        }
+    //}, 2000);
+
+
     let distincts = new Array();
     if (typeof message.tree != 'undefined') {
         for (let bb in message.tree.buildings) {
@@ -88,6 +107,7 @@ events.on('something_happened', message => {
                 let res = distincts[buildingName][ressss[r]];
                 divBuilding.textContent = ressss[r] + ': ' + timing(res, message.queue[q].level + 1);
             }
+
         }
     }
 
@@ -110,16 +130,13 @@ events.on('something_happened', message => {
 });
 
 events.on('construction_requested', message => {
-    let buttons = document.querySelectorAll('[data-button="builder"]');
-    buttons.forEach(button => (button.style.visibility = 'hidden'));
-});
-
-events.on('construction_requested', message => {
     let fine = new Date(message.queue.rawFinish);
     secondiAllaFine = Math.round((fine.getTime() - (new Date()).getTime()) / 1000);
 });
 
 events.on('construction_completed', message => {
+
+
     connection.send(JSON.stringify({
         text: 'refresh_buildings',
         yid: message.yid,
@@ -127,10 +144,10 @@ events.on('construction_completed', message => {
     }));
 });
 
-events.on('coundown_completed', () => {
-    let buttons = document.querySelectorAll('[data-button="builder"]');
-    buttons.forEach(button => (button.style.visibility = 'visible'));
-});
+// events.on('coundown_completed', () => {
+//     let buttons = document.querySelectorAll('[data-button="builder"]');
+//     buttons.forEach(button => (button.style.visibility = 'visible'));
+// });
 
 events.on('coundown_completed', () => {
     if (queueOfStuff.length > 0) {
@@ -155,6 +172,15 @@ events.on('connection_started', message => {
     }
 
     ui().render(message);
+
+    for(let v in message.visibilities) {
+        let buildingName = message.visibilities[v].name;
+        let visible = message.visibilities[v].visible;
+        if (visible === false) {
+            let data = '[data-building-name="' + buildingName + '"]';
+            document.querySelector(data).classList.add('hidden');
+        }
+    }
 
     let buttons = document.querySelectorAll('[data-button="builder"]');
     buttons.forEach(button => {
