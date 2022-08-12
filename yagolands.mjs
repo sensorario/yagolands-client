@@ -139,11 +139,6 @@ events.on('construction_completed', message => {
     }));
 });
 
-// events.on('coundown_completed', () => {
-//     let buttons = document.querySelectorAll('[data-button="builder"]');
-//     buttons.forEach(button => (button.style.visibility = 'visible'));
-// });
-
 events.on('coundown_completed', () => {
     if (queueOfStuff.length > 0) {
         for (let qof in queueOfStuff) {
@@ -151,7 +146,6 @@ events.on('coundown_completed', () => {
         }
     }
 });
-
 
 events.on('connection_started', message => {
     if (buildingsRendered === true) { return; }
