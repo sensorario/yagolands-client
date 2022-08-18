@@ -28,12 +28,11 @@ li.stat-item:first-child {
     background-color: brown;
     border-color: gold;
     border-width: 1px;
-    border-style: dotted;
     padding: 10px;
-    margin: 10px;
     height: 20px;
     position: absolute;
-    bottom: 20px;
+    bottom: 0px;
+    border-top-right-radius: 10px;
 }
 
 .building-list {
@@ -95,4 +94,13 @@ div#toolbar.reduced {
 @keyframes expand {
   from { width: 300px; }
   to { width: 100%; }
+}
+
+div#buildings {
+    float: right;
+    position: absolute;
+    right: 0px;
+    background-color: brown;
+    padding: 10px;
+    border-bottom-left-radius: 10px;
 }

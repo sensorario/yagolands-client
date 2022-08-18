@@ -10,3 +10,4 @@
  - building and resources dynamic
  - toolbar for developer
  - show only building that are buildable
+ - show builded buildings at the builded level
