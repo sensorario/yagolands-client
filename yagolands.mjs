@@ -14,7 +14,7 @@ let msg = document.getElementById('msg');
 let buildingsRendered = false;
 let secondsFromTheBeginning = 0;
 let available = [];
-let ressss = [];
+let buildingResources = [];
 
 function time() {
     secondsFromTheBeginning++;
@@ -96,12 +96,12 @@ events.on('something_happened', message => {
             div.textContent = message.queue[q].level;
 
             // aggiorno il numero di risorse necessarie
-            for (let r in ressss) {
-                let dataBuilding = '[data-id="' + message.queue[q].name + '-'+ressss[r]+'"]';
+            for (let r in buildingResources) {
+                let dataBuilding = '[data-id="' + message.queue[q].name + '-'+buildingResources[r]+'"]';
                 let divBuilding = document.querySelector(dataBuilding);
                 // @todo sostituire 22 con il valore iniziale reale dell-edificio
-                let res = distincts[buildingName][ressss[r]];
-                divBuilding.textContent = ressss[r] + ': ' + timing(res, message.queue[q].level + 1);
+                let res = distincts[buildingName][buildingResources[r]];
+                divBuilding.textContent = buildingResources[r] + ': ' + timing(res, message.queue[q].level + 1);
             }
         }
     }
@@ -151,7 +151,7 @@ events.on('connection_started', message => {
     if (buildingsRendered === true) { return; }
 
     for(let r in message.tree.buildings[0].building.res) {
-        ressss.push(message.tree.buildings[0].building.res[r].name);
+        buildingResources.push(message.tree.buildings[0].building.res[r].name);
     }
 
     for(let b in message.buildings) {
