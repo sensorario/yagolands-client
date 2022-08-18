@@ -6,6 +6,7 @@ import ui from './modules/ui/ui.js';
 
 // ...
 const events = eventi();
+const client = ui();
 
 // ... 
 let queueOfStuff = new Array();
@@ -59,19 +60,48 @@ connection.addEventListener('message', e => {
 });
 
 events.on('something_happened', message => {
-    // @todo sarebbe meglio avere gli edifici gia filtrati
+    if (message.message.text === 'refresh_buildings') {
+        let builded = [];
+        for (let q in message.queue) {
+            let buildingName = message.queue[q].name;
+            let buildingLevel = message.queue[q].level;
+            let isBuildingMissing = true;
+            for (let b in builded) {
+                if (builded[b].name == buildingName) {
+                    builded[b].level = buildingLevel;
+                    isBuildingMissing = false;
+                }
+            }
+            if (isBuildingMissing === true) {
+                builded.push({
+                    name: message.queue[q].name,
+                    level: message.queue[q].level,
+                });
+            }
+        }
 
+        events.emit('queue_refreshed', builded);
+    }
+});
+
+events.on('queue_refreshed', message => {
+    console.log('queue_refreshed', message);
+    client.renderQueue(message);
+});
+
+events.on('something_happened', message => {
     for(let v in message.visibilities) {
         let buildingName = message.visibilities[v].name;
         let visible = message.visibilities[v].visible;
         let data = '[data-building-name="' + buildingName + '"]';
-        if (document.querySelector(data) != null)
-        if (visible === false) {
-            document.querySelector(data).classList.add('hidden');
-            document.querySelector(data).classList.remove('visible');
-        } else {
-            document.querySelector(data).classList.remove('hidden');
-            document.querySelector(data).classList.add('visible');
+        if (document.querySelector(data) != null) {
+            if (visible === false) {
+                document.querySelector(data).classList.add('hidden');
+                document.querySelector(data).classList.remove('visible');
+            } else {
+                document.querySelector(data).classList.remove('hidden');
+                document.querySelector(data).classList.add('visible');
+            }
         }
     }
 
@@ -130,8 +160,6 @@ events.on('construction_requested', message => {
 });
 
 events.on('construction_completed', message => {
-
-
     connection.send(JSON.stringify({
         text: 'refresh_buildings',
         yid: message.yid,
@@ -160,7 +188,7 @@ events.on('connection_started', message => {
         available.push(action);
     }
 
-    ui().render(message);
+    client.render(message);
 
     for(let v in message.visibilities) {
         let buildingName = message.visibilities[v].name;

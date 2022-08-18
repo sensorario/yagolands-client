@@ -45,6 +45,17 @@ let resourcesGrid = message => {
     return map;
 };
 
+let renderQueue = message => {
+    let container = document.querySelector('#buildings');
+    while(container.firstChild) { container.removeChild(container.firstChild); }
+    for (let building in message) {
+        let divBuilding = document.createElement('div');
+        divBuilding.classList.add('building');
+        divBuilding.textContent = message[building].name + ' (' + message[building].level + ')';
+        container.appendChild(divBuilding);
+    }
+};
+
 let render = message => {
     document.querySelector('#yid').value = message.id;
 
@@ -79,5 +90,6 @@ let render = message => {
 export default function ui (message) {
     return {
         render,
+        renderQueue,
     };
 };
