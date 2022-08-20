@@ -49,11 +49,6 @@ msg.addEventListener('keydown', e => {
 });
 
 // .. listeners
-connection.addEventListener('match', e => {
-    console.log('match');
-});
-
-// .. listeners
 connection.addEventListener('message', e => {
     let message = JSON.parse(e.data);
     if (available.includes(message.type)) {
