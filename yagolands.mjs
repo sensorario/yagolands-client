@@ -6,7 +6,7 @@ import ui from './modules/ui/ui.js';
 
 // ...
 const events = eventi();
-const client = ui();
+const client = ui(events);
 
 // ... 
 let queueOfStuff = new Array();
@@ -33,10 +33,14 @@ msg.addEventListener('keydown', e => {
     let kc = e.which || e.keyCode;
     if (kc === 13) {
         let to = document.getElementById('to');
+        let matches = document.cookie.match(
+            new RegExp("(^| )yid=([^;]+)")
+        );
         send(
             JSON.stringify({
                 text: msg.value,
-                to: to.value
+                to: to.value,
+                cookieYid: matches ? matches[2] : '@',
             })
         );
         msg.value = '';
@@ -57,6 +61,24 @@ connection.addEventListener('message', e => {
     if (typeof message.message != 'undefined') {
         events.emit('connection_started', message);
     }
+});
+
+events.on('id_received', message => {
+    let matches = document.cookie.match(
+        new RegExp("(^| )yid=([^;]+)")
+    );
+    let cookie = matches ? matches[2] : '@';
+    console.log('id_received', message.id);
+    console.log('yid', cookie);
+    connection.send(JSON.stringify({
+        text: 'glue',
+        yid: {
+            client: message.id,
+            cookie: cookie,
+        }
+    }));
+    document.cookie = 'yid='+message.id+';';
+    events.emit('construction_completed', {id: message.id, yid: message.id})
 });
 
 events.on('something_happened', message => {
@@ -160,10 +182,14 @@ events.on('construction_requested', message => {
 });
 
 events.on('construction_completed', message => {
+    let matches = document.cookie.match(
+        new RegExp("(^| )yid=([^;]+)")
+    );
     connection.send(JSON.stringify({
         text: 'refresh_buildings',
         yid: message.yid,
         to: message.yid,
+        cookieYid: matches ? matches[2] : '@',
     }));
 });
 
@@ -203,15 +229,22 @@ events.on('connection_started', message => {
     buttons.forEach(button => {
         button.addEventListener('click', event => {
             let yid = document.querySelector('#yid').value;
-            let dto = { text: event.target.dataset.action, to: yid, yid: yid, position: 42 };
+            let matches = document.cookie.match(
+                new RegExp("(^| )yid=([^;]+)")
+            );
+            let dto = {
+                text: event.target.dataset.action,
+                to: yid,
+                yid: yid,
+                position: 42,
+                cookieYid: matches ? matches[2] : '@',
+            };
             connection.send(JSON.stringify(dto));
         });
     });
 
     buildingsRendered = true;
 });
-
-connection.addEventListener('message', e => {});
 
 function send(data) {
     if (connection.readyState === WebSocket.OPEN) {
@@ -221,7 +254,17 @@ function send(data) {
     }
 }
 
-setTimeout(() => { send(JSON.stringify({ text: 'connection-call', to: 'all' })); }, 1000);
+setTimeout(() => {
+    let matches = document.cookie.match(
+        new RegExp("(^| )yid=([^;]+)")
+    );
+
+    send(JSON.stringify({
+        text: 'connection-call',
+        to: 'all',
+        cookieYid: matches ? matches[2] : '',
+    }));
+}, 1000);
 
 const buttonToolbar = document.querySelector('div#toolbar button');
 buttonToolbar.addEventListener('click', event => {

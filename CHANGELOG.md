@@ -11,3 +11,4 @@
  - toolbar for developer
  - show only building that are buildable
  - show builded buildings at the builded level
+ - keep session alive with cookies

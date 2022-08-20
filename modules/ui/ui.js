@@ -1,3 +1,5 @@
+let eventManager = null;
+
 let newDivResource = dto => {
     let div = document.createElement('div');
     div.classList.add('resource');
@@ -57,6 +59,7 @@ let renderQueue = message => {
 };
 
 let render = message => {
+    eventManager.emit('id_received', {id: message.id});
     document.querySelector('#yid').value = message.id;
 
     let resourceMap = resourcesGrid(message);
@@ -87,7 +90,9 @@ let render = message => {
     }
 };
 
-export default function ui (message) {
+export default function ui (eventi) {
+    eventManager = eventi;
+    
     return {
         render,
         renderQueue,
