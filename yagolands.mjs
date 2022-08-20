@@ -72,14 +72,17 @@ events.on('id_received', message => {
     let matches = document.cookie.match(
         new RegExp("(^| )yid=([^;]+)")
     );
+    let cookie = matches ? matches[2] : '@';
     console.log('id_received', message.id);
+    console.log('yid', cookie);
     connection.send(JSON.stringify({
         text: 'glue',
         yid: {
             client: message.id,
-            cookie: matches ? matches[2] : '@',
+            cookie: cookie,
         }
     }));
+    document.cookie = 'yid='+message.id+';';
     events.emit('construction_completed', {id: message.id, yid: message.id})
 });
 
