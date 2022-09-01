@@ -182,6 +182,12 @@ events.on('construction_requested', message => {
 });
 
 events.on('construction_completed', message => {
+    // @todo repeated code
+    let buttons = document.querySelectorAll('[data-button="builder"]');
+    buttons.forEach(item => item.style.visibility = 'visible');
+});
+
+events.on('construction_completed', message => {
     let matches = document.cookie.match(
         new RegExp("(^| )yid=([^;]+)")
     );
@@ -228,6 +234,8 @@ events.on('connection_started', message => {
     let buttons = document.querySelectorAll('[data-button="builder"]');
     buttons.forEach(button => {
         button.addEventListener('click', event => {
+            // @todo repeated code
+            buttons.forEach(item => item.style.visibility = 'hidden');
             let yid = document.querySelector('#yid').value;
             let matches = document.cookie.match(
                 new RegExp("(^| )yid=([^;]+)")
