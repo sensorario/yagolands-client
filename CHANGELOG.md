@@ -13,3 +13,4 @@
  - show builded buildings at the builded level
  - keep session alive with cookies
  - disable multiple building at the same time
+ - display progress bar as well as countdown clock

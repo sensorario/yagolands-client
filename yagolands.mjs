@@ -19,8 +19,16 @@ let buildingResources = [];
 
 function time() {
     secondsFromTheBeginning++;
-    if (--secondiAllaFine >= 0) {
+    if (secondiAllaFine >= 0) {
         document.querySelector('.countdown').innerHTML = clock().clock(secondiAllaFine);
+        let progress = document.querySelector('#countdown-progress');
+        let value = progress.max;
+        let newMax = value;
+        if (newMax == 1) {
+            progress.max = secondiAllaFine;
+            newMax = secondiAllaFine;
+        }
+        progress.value = newMax - secondiAllaFine;
     }
     document.querySelector('.seconds').innerHTML = clock().clock(secondsFromTheBeginning);
     setTimeout(() => time(), 1000);
@@ -68,8 +76,6 @@ events.on('id_received', message => {
         new RegExp("(^| )yid=([^;]+)")
     );
     let cookie = matches ? matches[2] : '@';
-    console.log('id_received', message.id);
-    console.log('yid', cookie);
     connection.send(JSON.stringify({
         text: 'glue',
         yid: {
@@ -107,7 +113,6 @@ events.on('something_happened', message => {
 });
 
 events.on('queue_refreshed', message => {
-    console.log('queue_refreshed', message);
     client.renderQueue(message);
 });
 
