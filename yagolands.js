@@ -1,15 +1,11 @@
 // imports
-import clock from './modules/clock/clock.js';
-import eventi from './modules/eventi/eventi.js';
-import timing from './modules/timing/timing.js';
-import ui from './modules/ui/ui.js';
+import { clock } from './modules/clock/clock.js';
+import * as events from './modules/eventi/eventi.js';
+import { timing } from './modules/timing/timing.js';
+import * as client from './modules/ui/ui.js';
 
 // ...
-const events = eventi();
-const client = ui(events);
-
-// ...
-let queueOfStuff = new Array();
+let queueOfStuff = [];
 let connection = new WebSocket('ws://localhost:12345');
 let msg = document.getElementById('msg');
 let buildingsRendered = false;
@@ -20,7 +16,7 @@ let buildingResources = [];
 function time() {
     secondsFromTheBeginning++;
     if (secondiAllaFine >= 0) {
-        document.querySelector('.countdown').innerHTML = clock().clock(secondiAllaFine);
+        document.querySelector('.countdown').innerHTML = clock(secondiAllaFine);
         let progress = document.querySelector('#countdown-progress');
         let value = progress.max;
         let newMax = value;
@@ -30,7 +26,7 @@ function time() {
         }
         progress.value = newMax - secondiAllaFine;
     }
-    document.querySelector('.seconds').innerHTML = clock().clock(secondsFromTheBeginning);
+    document.querySelector('.seconds').innerHTML = clock(secondsFromTheBeginning);
     setTimeout(() => time(), 1000);
 }
 
@@ -178,7 +174,7 @@ events.on('something_happened', message => {
     divOfClients.innerHTML = numberOfClients;
     divOfVillages.innerHTML = numberOfVillages;
     divOfFields.innerHTML = numberOfFields;
-    divOfSeconds.innerHTML = clock().clock(secondsFromTheBeginning);
+    divOfSeconds.innerHTML = clock(secondsFromTheBeginning);
 });
 
 events.on('construction_requested', message => {
