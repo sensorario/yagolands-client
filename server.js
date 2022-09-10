@@ -1,19 +1,24 @@
-const fastify = require('fastify')({ logger: true });
-const path = require('path');
+import staticPlugin from '@fastify/static';
+import fastify from 'fastify';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-fastify.register(require('@fastify/static'), {
-    root: path.join(__dirname, '.')
+const rootUrl = new URL(import.meta.url);
+
+const server = fastify({ logger: true });
+
+server.register(staticPlugin, {
+    root: dirname(fileURLToPath(rootUrl))
 });
 
-fastify.get('/', function (req, reply) {
-    return reply.sendFile('index.html');
-});
+server.get('/', (req, reply) => reply.sendFile('index.html'));
 
-const start = async () => {
+const port = 3000;
+const start = () => {
     try {
-        await fastify.listen({ port: 3000 });
+        server.listen({ port });
     } catch (err) {
-        fastify.log.error(err);
+        server.log.error(err);
         process.exit(1);
     }
 };

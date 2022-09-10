@@ -1,12 +1,11 @@
-import clock from './modules/clock/clock.mjs';
+import clock from './modules/clock/clock.js';
 import eventi from './modules/eventi/eventi.js';
 
 const events = eventi();
 
 function updateCountDown() {
     if (--secondiAllaFine >= 0) {
-        document.querySelector('.countdown').innerHTML = clock()
-            .clock(secondiAllaFine);
+        document.querySelector('.countdown').innerHTML = clock().clock(secondiAllaFine);
     }
 }
 

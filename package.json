@@ -1,27 +1,28 @@
 {
-  "dependencies": {
-    "@fastify/static": "^6.4.1",
-    "fastify": "^4.3.0"
-  },
-  "scripts": {
-    "start": "node server.js"
-  },
-  "name": "yagolands-client",
-  "description": "This is just a very very very simple client created just to interact with the server that you can find here:",
-  "version": "1.0.0",
-  "main": "server.js",
-  "devDependencies": {
-    "prettier": "^2.7.1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/sensorario/yagolands-client.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/sensorario/yagolands-client/issues"
-  },
-  "homepage": "https://github.com/sensorario/yagolands-client#readme"
+    "dependencies": {
+        "@fastify/static": "^6.4.1",
+        "fastify": "^4.3.0"
+    },
+    "scripts": {
+        "start": "node server.js"
+    },
+    "name": "yagolands-client",
+    "description": "This is just a very very very simple client created just to interact with the server that you can find here:",
+    "version": "1.0.0",
+    "main": "server.js",
+    "devDependencies": {
+        "prettier": "^2.7.1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sensorario/yagolands-client.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/sensorario/yagolands-client/issues"
+    },
+    "homepage": "https://github.com/sensorario/yagolands-client#readme",
+    "type": "module"
 }

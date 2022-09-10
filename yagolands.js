@@ -1,14 +1,14 @@
 // imports
-import clock from './modules/clock/clock.mjs';
-import timing from './modules/timing/timing.mjs';
+import clock from './modules/clock/clock.js';
 import eventi from './modules/eventi/eventi.js';
+import timing from './modules/timing/timing.js';
 import ui from './modules/ui/ui.js';
 
 // ...
 const events = eventi();
 const client = ui(events);
 
-// ... 
+// ...
 let queueOfStuff = new Array();
 let connection = new WebSocket('ws://localhost:12345');
 let msg = document.getElementById('msg');
@@ -36,19 +36,17 @@ function time() {
 
 time();
 
-// non dovrebbero esistere piu' form ... 
+// non dovrebbero esistere piu' form ...
 msg.addEventListener('keydown', e => {
     let kc = e.which || e.keyCode;
     if (kc === 13) {
         let to = document.getElementById('to');
-        let matches = document.cookie.match(
-            new RegExp("(^| )yid=([^;]+)")
-        );
+        let matches = document.cookie.match(new RegExp('(^| )yid=([^;]+)'));
         send(
             JSON.stringify({
                 text: msg.value,
                 to: to.value,
-                cookieYid: matches ? matches[2] : '@',
+                cookieYid: matches ? matches[2] : '@'
             })
         );
         msg.value = '';
@@ -61,7 +59,9 @@ connection.addEventListener('message', e => {
     let message = JSON.parse(e.data);
     if (available.includes(message.type)) {
         events.emit('construction_requested', { type: message.type, secondiAllaFine: secondiAllaFine, queue: message.queue });
-        queueOfStuff.push(() => { events.emit('construction_completed', yid); });
+        queueOfStuff.push(() => {
+            events.emit('construction_completed', yid);
+        });
     } else {
         events.emit('something_happened', message);
     }
@@ -72,19 +72,19 @@ connection.addEventListener('message', e => {
 });
 
 events.on('id_received', message => {
-    let matches = document.cookie.match(
-        new RegExp("(^| )yid=([^;]+)")
-    );
+    let matches = document.cookie.match(new RegExp('(^| )yid=([^;]+)'));
     let cookie = matches ? matches[2] : '@';
-    connection.send(JSON.stringify({
-        text: 'glue',
-        yid: {
-            client: message.id,
-            cookie: cookie,
-        }
-    }));
-    document.cookie = 'yid='+message.id+';';
-    events.emit('construction_completed', {id: message.id, yid: message.id})
+    connection.send(
+        JSON.stringify({
+            text: 'glue',
+            yid: {
+                client: message.id,
+                cookie: cookie
+            }
+        })
+    );
+    document.cookie = 'yid=' + message.id + ';';
+    events.emit('construction_completed', { id: message.id, yid: message.id });
 });
 
 events.on('something_happened', message => {
@@ -103,7 +103,7 @@ events.on('something_happened', message => {
             if (isBuildingMissing === true) {
                 builded.push({
                     name: message.queue[q].name,
-                    level: message.queue[q].level,
+                    level: message.queue[q].level
                 });
             }
         }
@@ -117,7 +117,7 @@ events.on('queue_refreshed', message => {
 });
 
 events.on('something_happened', message => {
-    for(let v in message.visibilities) {
+    for (let v in message.visibilities) {
         let buildingName = message.visibilities[v].name;
         let visible = message.visibilities[v].visible;
         let data = '[data-building-name="' + buildingName + '"]';
@@ -154,7 +154,7 @@ events.on('something_happened', message => {
 
             // aggiorno il numero di risorse necessarie
             for (let r in buildingResources) {
-                let dataBuilding = '[data-id="' + message.queue[q].name + '-'+buildingResources[r]+'"]';
+                let dataBuilding = '[data-id="' + message.queue[q].name + '-' + buildingResources[r] + '"]';
                 let divBuilding = document.querySelector(dataBuilding);
                 // @todo sostituire 22 con il valore iniziale reale dell-edificio
                 let res = distincts[buildingName][buildingResources[r]];
@@ -183,25 +183,25 @@ events.on('something_happened', message => {
 
 events.on('construction_requested', message => {
     let fine = new Date(message.queue.rawFinish);
-    secondiAllaFine = Math.round((fine.getTime() - (new Date()).getTime()) / 1000);
+    secondiAllaFine = Math.round((fine.getTime() - new Date().getTime()) / 1000);
 });
 
 events.on('construction_completed', message => {
     // @todo repeated code
     let buttons = document.querySelectorAll('[data-button="builder"]');
-    buttons.forEach(item => item.style.visibility = 'visible');
+    buttons.forEach(item => (item.style.visibility = 'visible'));
 });
 
 events.on('construction_completed', message => {
-    let matches = document.cookie.match(
-        new RegExp("(^| )yid=([^;]+)")
+    let matches = document.cookie.match(new RegExp('(^| )yid=([^;]+)'));
+    connection.send(
+        JSON.stringify({
+            text: 'refresh_buildings',
+            yid: message.yid,
+            to: message.yid,
+            cookieYid: matches ? matches[2] : '@'
+        })
     );
-    connection.send(JSON.stringify({
-        text: 'refresh_buildings',
-        yid: message.yid,
-        to: message.yid,
-        cookieYid: matches ? matches[2] : '@',
-    }));
 });
 
 events.on('coundown_completed', () => {
@@ -213,13 +213,15 @@ events.on('coundown_completed', () => {
 });
 
 events.on('connection_started', message => {
-    if (buildingsRendered === true) { return; }
+    if (buildingsRendered === true) {
+        return;
+    }
 
-    for(let r in message.tree.buildings[0].building.res) {
+    for (let r in message.tree.buildings[0].building.res) {
         buildingResources.push(message.tree.buildings[0].building.res[r].name);
     }
 
-    for(let b in message.buildings) {
+    for (let b in message.buildings) {
         let buildingName = message.buildings[b].name;
         let action = 'build_' + buildingName;
         available.push(action);
@@ -227,7 +229,7 @@ events.on('connection_started', message => {
 
     client.render(message);
 
-    for(let v in message.visibilities) {
+    for (let v in message.visibilities) {
         let buildingName = message.visibilities[v].name;
         let visible = message.visibilities[v].visible;
         if (visible === false) {
@@ -240,17 +242,15 @@ events.on('connection_started', message => {
     buttons.forEach(button => {
         button.addEventListener('click', event => {
             // @todo repeated code
-            buttons.forEach(item => item.style.visibility = 'hidden');
+            buttons.forEach(item => (item.style.visibility = 'hidden'));
             let yid = document.querySelector('#yid').value;
-            let matches = document.cookie.match(
-                new RegExp("(^| )yid=([^;]+)")
-            );
+            let matches = document.cookie.match(new RegExp('(^| )yid=([^;]+)'));
             let dto = {
                 text: event.target.dataset.action,
                 to: yid,
                 yid: yid,
                 position: 42,
-                cookieYid: matches ? matches[2] : '@',
+                cookieYid: matches ? matches[2] : '@'
             };
             connection.send(JSON.stringify(dto));
         });
@@ -268,15 +268,15 @@ function send(data) {
 }
 
 setTimeout(() => {
-    let matches = document.cookie.match(
-        new RegExp("(^| )yid=([^;]+)")
-    );
+    let matches = document.cookie.match(new RegExp('(^| )yid=([^;]+)'));
 
-    send(JSON.stringify({
-        text: 'connection-call',
-        to: 'all',
-        cookieYid: matches ? matches[2] : '',
-    }));
+    send(
+        JSON.stringify({
+            text: 'connection-call',
+            to: 'all',
+            cookieYid: matches ? matches[2] : ''
+        })
+    );
 }, 1000);
 
 const buttonToolbar = document.querySelector('div#toolbar button');
