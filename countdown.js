@@ -1,27 +1,25 @@
-import clock from './modules/clock/clock.js';
-import eventi from './modules/eventi/eventi.js';
+import { clock } from './modules/clock/clock.js';
+import { emit } from './modules/eventi/eventi.js';
 
-const events = eventi();
-
-function updateCountDown() {
+const updateCountDown = () => {
     if (--secondiAllaFine >= 0) {
-        document.querySelector('.countdown').innerHTML = clock().clock(secondiAllaFine);
+        document.querySelector('.countdown').innerHTML = clock(secondiAllaFine);
     }
-}
+};
 
-function checkVisibility() {
+const checkVisibility = () => {
     if (secondiAllaFine <= 0) {
         document.querySelector('.countdown-wrapper').style.visibility = 'hidden';
-        events.emit('coundown_completed');
+        emit('coundown_completed');
     } else {
         document.querySelector('.countdown-wrapper').style.visibility = 'visible';
     }
-}
+};
 
-function countdown() {
+const countdown = () => {
     updateCountDown();
     checkVisibility();
-    setTimeout(() => countdown(), 1000);
-}
+    setTimeout(countdown, 1000);
+};
 
 countdown();
