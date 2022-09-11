@@ -1,5 +1,6 @@
 import { emit } from '../eventi/eventi.js';
 import { createFromHTML } from '../utils/utils.js';
+import { render } from './canvas.js';
 
 const newDivResource = dto =>
     createFromHTML(
@@ -23,7 +24,7 @@ export const renderQueue = message => {
 };
 
 const treeContainer = document.querySelector('[data-content="tree-info"]');
-export const render = message => {
+export const renderUI = message => {
     emit('id_received', { id: message.id });
     document.querySelector('#yid').value = message.id;
 
@@ -46,4 +47,6 @@ export const render = message => {
         divBuilding.appendChild(buildBuildingButton({ name }));
         treeContainer.appendChild(divBuilding);
     }
+
+    render();
 };

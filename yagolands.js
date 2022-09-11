@@ -223,7 +223,7 @@ events.on('connection_started', message => {
         available.push(action);
     }
 
-    client.render(message);
+    client.renderUI(message);
 
     for (let v in message.visibilities) {
         let buildingName = message.visibilities[v].name;

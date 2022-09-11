@@ -1,42 +1,72 @@
-html, body {
-    padding: 0px;
-    border: 0px;
-    margin: 0px;
+@property --ui-color {
+    syntax: '<color>';
+    inherits: true;
 }
 
-* {
-    font-family: Verdana;
+:root {
+    --ui-color: brown;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
+        sans-serif;
 }
 
-li.stat-item {
-    list-style: none;
-    display: contents;
+html,
+body {
+    height: 100%;
+    margin: 0;
 }
 
-ul.statistics {
-    background-color: brown;
-    padding: 15px;
-    margin: 0px;
-    height: 20px;
+body {
+    display: flex;
+    flex-direction: column;
 }
 
-li.stat-item:first-child {
-    color: white;
+main {
+    flex-grow: 1;
+    display: grid;
+}
+main > * {
+    grid-area: 1 / 1;
+    display: flex;
+    justify-content: space-between;
 }
 
-.countdown-wrapper {
-    background-color: brown;
-    border-color: gold;
-    border-width: 1px;
-    padding: 10px;
-    height: 20px;
-    position: absolute;
-    bottom: 0px;
-    border-top-right-radius: 10px;
+*,
+::before,
+::after {
+    box-sizing: border-box;
+}
+
+canvas {
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+}
+canvas.panning {
+    cursor: grabbing;
+}
+
+#topUI {
+    align-self: start;
+    align-items: flex-start;
+}
+#bottomUI {
+    align-self: end;
+    align-items: flex-end;
+}
+
+#topUI,
+#bottomUI {
+    pointer-events: none;
+}
+#topUI > *,
+#bottomUI > * {
+    pointer-events: all;
 }
 
 .building-list {
     display: flex;
+    padding: 0.5rem;
+    gap: 0.5rem;
 }
 
 .building-item.hidden {
@@ -48,11 +78,16 @@ li.stat-item:first-child {
 }
 
 .building-item {
-    border-width: 1px;
-    border-style: dotted;
-    margin: 2px;
-    border-radius: 5px;
+    box-shadow: 0 0 0.5rem rgb(0 0 0 / 30%);
+    border-radius: 0.3rem;
+    padding: 0.6rem;
+    background-color: white;
+}
+
+div#buildings {
+    background-color: var(--ui-color);
     padding: 10px;
+    border-bottom-left-radius: 10px;
 }
 
 div#toolbar div {
@@ -63,44 +98,55 @@ div#toolbar {
     display: flex;
     flex-direction: row;
     gap: 10px;
-    position: absolute;
-    background: brown;
-    position: absolute;
-    bottom: 0;
-    right: 0;
+    background: var(--ui-color);
     width: 100%;
     border-color: white;
-    border-width: 1px 0px 0px 1px;
+    border-width: 1px 0 0 1px;
     border-style: double;
     animation-name: expand;
     animation-duration: 0.2s;
-    height: 40px;
     overflow: hidden;
 }
 
 div#toolbar.reduced {
-    right: 0;
     width: 350px;
     border-top-left-radius: 15px;
     animation-name: example;
     animation-duration: 0.2s;
 }
 
+ul.statistics {
+    display: flex;
+    background-color: var(--ui-color);
+    list-style: none;
+    padding: 1rem;
+    margin: 0;
+    gap: 1rem;
+}
+ul.statistics > :first-child {
+    color: white;
+}
+
+.countdown-wrapper {
+    background-color: var(--ui-color);
+    padding: 10px;
+    border-top-right-radius: 10px;
+}
+
 @keyframes example {
-  from { width: 100%; }
-  to { width: 300px; }
+    from {
+        width: 100%;
+    }
+    to {
+        width: 300px;
+    }
 }
 
 @keyframes expand {
-  from { width: 300px; }
-  to { width: 100%; }
-}
-
-div#buildings {
-    float: right;
-    position: absolute;
-    right: 0px;
-    background-color: brown;
-    padding: 10px;
-    border-bottom-left-radius: 10px;
+    from {
+        width: 300px;
+    }
+    to {
+        width: 100%;
+    }
 }

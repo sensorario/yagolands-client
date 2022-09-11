@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="it">
-    <head>
-        <title>Yagolands client</title>
-        <link rel="stylesheet" type="text/css" href="yagolands.css" />
-    </head>
-    <body>
+
+<head>
+    <title>Yagolands client</title>
+    <link rel="stylesheet" type="text/css" href="yagolands.css" />
+</head>
+
+<body>
+    <header>
         <ul class="statistics">
             <li class="stat-item">server statistics:</li>
             <li class="stat-item">clients(<span class="numberOfClients">0</span>)</li>
@@ -12,36 +15,46 @@
             <li class="stat-item">fields(<span class="numberOfFields">0</span>)</li>
             <li class="stat-item">time(<span class="seconds">00h:00m:00s</span>)</li>
         </ul>
+    </header>
+    <main>
+        <canvas></canvas>
 
-        <div class="countdown-wrapper" style="">
-            seconds to complete the building:
-            <span class="countdown">00h:00m:00s</span>
-            &nbsp;|&nbsp;
-            <progress id="countdown-progress" max="0" value="0"></progress>
+        <div id="topUI">
+            <div class="building-list" data-content="tree-info">
+                <input id="msg" type="hidden" />
+                <input placeholder="to" id="to" type="hidden" />
+            </div>
+
+            <div id="buildings">no buildings yet</div>
         </div>
 
-        <div class="building-list" data-content="tree-info"></ul>
-
-        <input id="msg" type="hidden" />
-        <input placeholder="to" id="to" type="hidden" />
-
-        <div id="buildings">no buildings yet</div>
-
-        <div id="toolbar" class="reduced">
-            <div class="yid-container">
-                <lable for="yid">yid:</lable>
-                <input type="text" id="yid" name="yid" />
+        <div id="bottomUI">
+            <div class="countdown-wrapper">
+                seconds to complete the building:
+                <span class="countdown">00h:00m:00s</span>
+                &nbsp;|&nbsp;
+                <progress id="countdown-progress" max="0" value="0"></progress>
             </div>
-            <div class="actions">
-                <button>toggle</button>
+
+            <div id="toolbar" class="reduced">
+                <div class="yid-container">
+                    <label for="yid">yid:</label>
+                    <input type="text" id="yid" name="yid" />
+                </div>
+                <div class="actions">
+                    <button>toggle</button>
+                </div>
             </div>
         </div>
+    </main>
 
-        <script type="module" src="yagolands.js"></script>
-        <script type="module" src="countdown.js"></script>
 
-        <script type="text/javascript">
-            let secondiAllaFine = 0;
-        </script>
-    </body>
+    <script type="module" src="yagolands.js"></script>
+    <script type="module" src="countdown.js"></script>
+
+    <script type="text/javascript">
+        let secondiAllaFine = 0;
+    </script>
+</body>
+
 </html>
