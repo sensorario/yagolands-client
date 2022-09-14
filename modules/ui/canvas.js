@@ -6,11 +6,22 @@ const buildings = [];
 const BASE_CELL_SIZE = 50;
 const BORDER_WIDTH = 0.04;
 const FONT_SIZE = 12;
-let zoom = 1;
-let currentCellSize = BASE_CELL_SIZE * zoom;
+const MIN_ZOOM = 0.2;
+const MAX_ZOOM = 5;
+let /** @type {number} */ zoom;
+let /** @type {number} */ currentCellSize;
+let /** @type {number} */ innerCellSize;
 
 let canvasWidth = canvas.clientWidth;
 let canvasHeight = canvas.clientHeight;
+
+const setZoom = (/** @type {number} */ level) => {
+    zoom = Math.max(Math.min(level, MAX_ZOOM), MIN_ZOOM);
+    currentCellSize = BASE_CELL_SIZE * zoom;
+    innerCellSize = currentCellSize * (1 - 2 * BORDER_WIDTH);
+};
+setZoom(1);
+
 let xShift = canvasWidth / 2 - currentCellSize / 2;
 let yShift = canvasHeight / 2 - currentCellSize / 2;
 
@@ -44,11 +55,26 @@ export const cellAt = (x, y) => {
 export const zoomAt = (x, y, factor) => {
     const diffX = xShift - x;
     const diffY = yShift - y;
-    zoom = Math.max(Math.min(zoom * factor, 5), 0.2);
-    currentCellSize = BASE_CELL_SIZE * zoom;
+    setZoom(zoom * factor);
     xShift = x + diffX * factor;
     yShift = y + diffY * factor;
     render();
+};
+
+const drawCell = (xIdx, yIdx, color = '#fff') => {
+    const x = xShift + currentCellSize * (xIdx + BORDER_WIDTH);
+    const y = yShift + currentCellSize * (yIdx + BORDER_WIDTH);
+    context.fillStyle = color;
+    context.fillRect(x, y, innerCellSize, innerCellSize);
+    context.fillStyle = '#333';
+    context.font = `${FONT_SIZE * zoom}px sans-serif`;
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.fillText(
+        `${xIdx},${yIdx}`,
+        x + currentCellSize * BORDER_WIDTH + innerCellSize / 2,
+        y + currentCellSize * BORDER_WIDTH + innerCellSize / 2
+    );
 };
 
 export const render = () => {
@@ -57,49 +83,48 @@ export const render = () => {
 
     const [xStart, yStart] = cellAt(0, 0);
     const [xEnd, yEnd] = cellAt(canvasWidth, canvasHeight);
-    const innerCellSize = currentCellSize * (1 - 2 * BORDER_WIDTH);
     for (let yIdx = yStart; yIdx <= yEnd; yIdx++) {
         for (let xIdx = xStart; xIdx <= xEnd; xIdx++) {
-            const x = xShift + currentCellSize * (xIdx + BORDER_WIDTH);
-            const y = yShift + currentCellSize * (yIdx + BORDER_WIDTH);
-            context.fillStyle = xIdx || yIdx ? '#fff' : '#fdd';
-            context.fillRect(x, y, innerCellSize, innerCellSize);
-            context.fillStyle = '#333';
-            context.font = `${FONT_SIZE * zoom}px sans-serif`;
-            context.textAlign = 'center';
-            context.textBaseline = 'middle';
-            context.fillText(
-                `${xIdx},${yIdx}`,
-                x + currentCellSize * BORDER_WIDTH + innerCellSize / 2,
-                y + currentCellSize * BORDER_WIDTH + innerCellSize / 2
-            );
+            drawCell(xIdx, yIdx);
         }
     }
 };
 
 let panStart = null;
-canvas.addEventListener('pointerdown', ({ pageX, pageY }) => {
-    panStart = { x: pageX, y: pageY };
+let previousHover = null;
+canvas.addEventListener('pointerdown', ({ offsetX, offsetY }) => {
+    panStart = { x: offsetX, y: offsetY };
     canvas.classList.add('panning');
 });
 const endPan = () => {
     panStart = null;
+    if (previousHover) {
+        drawCell(...previousHover);
+        previousHover = null;
+    }
     canvas.classList.remove('panning');
 };
 canvas.addEventListener('pointerleave', endPan);
 canvas.addEventListener('pointerup', endPan);
-canvas.addEventListener('pointermove', ({ pageX, pageY }) => {
-    if (!panStart) return;
-    const diffX = pageX - panStart.x;
-    const diffY = pageY - panStart.y;
-    if (diffX || diffY) {
-        xShift += diffX;
-        yShift += diffY;
-        render();
-        panStart = { x: pageX, y: pageY };
+canvas.addEventListener('pointermove', ({ offsetX, offsetY }) => {
+    if (panStart) {
+        const diffX = offsetX - panStart.x;
+        const diffY = offsetY - panStart.y;
+        if (diffX || diffY) {
+            xShift += diffX;
+            yShift += diffY;
+            render();
+            panStart = { x: offsetX, y: offsetY };
+        }
+    } else {
+        const currentHover = cellAt(offsetX, offsetY);
+        if (!previousHover || currentHover.some((coord, index) => coord === previousHover[index])) {
+            if (previousHover) drawCell(...previousHover);
+            drawCell(...currentHover, '#ddf');
+            previousHover = currentHover;
+        }
     }
 });
-canvas.addEventListener('wheel', ({ pageX, pageY, deltaY }) => {
-    const { top, left } = canvas.getBoundingClientRect();
-    zoomAt(pageX - left, pageY - top, 1.1 ** (deltaY / -150));
+canvas.addEventListener('wheel', ({ offsetX, offsetY, deltaY }) => {
+    zoomAt(offsetX, offsetY, 1.1 ** (deltaY / -150));
 });
