@@ -1,31 +1,32 @@
 {
-  "editor.tabSize": 2,
-  "editor.detectIndentation": false,
-  "editor.insertSpaces": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSave": true,
-  "editor.codeActionsOnSave": {
-    "source.organizeImports": true
-  },
-  "workbench.colorCustomizations": {
-    "activityBar.activeBackground": "#c76739",
-    "activityBar.activeBorder": "#6ad58d",
-    "activityBar.background": "#c76739",
-    "activityBar.foreground": "#e7e7e7",
-    "activityBar.inactiveForeground": "#e7e7e799",
-    "activityBarBadge.background": "#6ad58d",
-    "activityBarBadge.foreground": "#15202b",
-    "sash.hoverBorder": "#c76739",
-    "statusBar.background": "#a0522d",
-    "statusBar.foreground": "#e7e7e7",
-    "statusBarItem.hoverBackground": "#c76739",
-    "statusBarItem.remoteBackground": "#a0522d",
-    "statusBarItem.remoteForeground": "#e7e7e7",
-    "titleBar.activeBackground": "#a0522d",
-    "titleBar.activeForeground": "#e7e7e7",
-    "titleBar.inactiveBackground": "#a0522d99",
-    "titleBar.inactiveForeground": "#e7e7e799",
-    "commandCenter.border": "#e7e7e799"
-  },
-  "peacock.color": "sienna"
+    "editor.tabSize": 2,
+    "editor.detectIndentation": false,
+    "editor.insertSpaces": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    },
+    "workbench.colorCustomizations": {
+        "activityBar.activeBackground": "#c76739",
+        "activityBar.activeBorder": "#6ad58d",
+        "activityBar.background": "#c76739",
+        "activityBar.foreground": "#e7e7e7",
+        "activityBar.inactiveForeground": "#e7e7e799",
+        "activityBarBadge.background": "#6ad58d",
+        "activityBarBadge.foreground": "#15202b",
+        "sash.hoverBorder": "#c76739",
+        "statusBar.background": "#a0522d",
+        "statusBar.foreground": "#e7e7e7",
+        "statusBarItem.hoverBackground": "#c76739",
+        "statusBarItem.remoteBackground": "#a0522d",
+        "statusBarItem.remoteForeground": "#e7e7e7",
+        "titleBar.activeBackground": "#a0522d",
+        "titleBar.activeForeground": "#e7e7e7",
+        "titleBar.inactiveBackground": "#a0522d99",
+        "titleBar.inactiveForeground": "#e7e7e799",
+        "commandCenter.border": "#e7e7e799"
+    },
+    "peacock.color": "sienna",
+    "conventionalCommits.scopes": ["canvas"]
 }
