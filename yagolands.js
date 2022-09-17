@@ -54,6 +54,7 @@ msg.addEventListener('keydown', e => {
 connection.addEventListener('message', e => {
     let message = JSON.parse(e.data);
     if (available.includes(message.type)) {
+        console.log(message);
         events.emit('construction_requested', { type: message.type, secondiAllaFine: secondiAllaFine, queue: message.queue });
         queueOfStuff.push(() => {
             events.emit('construction_completed', yid);
@@ -248,6 +249,7 @@ events.on('connection_started', message => {
                 position: 42,
                 cookieYid: matches ? matches[2] : '@'
             };
+            // console.log('action: ', event.target.dataset.action);
             connection.send(JSON.stringify(dto));
         });
     });
