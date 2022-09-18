@@ -16,7 +16,9 @@ let buildingResources = [];
 function time() {
     secondsFromTheBeginning++;
     if (secondiAllaFine >= 0) {
-        document.querySelector('.countdown').innerHTML = clock(secondiAllaFine);
+        document
+            .querySelector('.countdown')
+            .innerHTML = clock(secondiAllaFine);
         let progress = document.querySelector('#countdown-progress');
         let value = progress.max;
         let newMax = value;
@@ -54,8 +56,14 @@ msg.addEventListener('keydown', e => {
 connection.addEventListener('message', e => {
     let message = JSON.parse(e.data);
     if (available.includes(message.type)) {
-        console.log(message);
-        events.emit('construction_requested', { type: message.type, secondiAllaFine: secondiAllaFine, queue: message.queue });
+        let orarioFineLavori = message.finishTime.fine;
+        events.emit('construction_requested', {
+            orarioFineLavori: orarioFineLavori,
+            type: message.type,
+            secondiAllaFine: secondiAllaFine,
+            queue: message.queue,
+            endOfConstruction: message.finishTime,
+        });
         queueOfStuff.push(() => {
             events.emit('construction_completed', yid);
         });
@@ -180,7 +188,7 @@ events.on('something_happened', message => {
 
 events.on('construction_requested', message => {
     let fine = new Date(message.queue.rawFinish);
-    secondiAllaFine = Math.round((fine.getTime() - new Date().getTime()) / 1000);
+    orarioFineLavori = message.orarioFineLavori;
 });
 
 events.on('construction_completed', message => {
@@ -249,7 +257,6 @@ events.on('connection_started', message => {
                 position: 42,
                 cookieYid: matches ? matches[2] : '@'
             };
-            // console.log('action: ', event.target.dataset.action);
             connection.send(JSON.stringify(dto));
         });
     });
