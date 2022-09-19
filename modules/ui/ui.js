@@ -18,9 +18,15 @@ const buildLevel = dto => `<span class="building-level" data-building="${dto.nam
 
 const resourcesGrid = message => Object.fromEntries(message.tree.buildings.map(bld => [bld.name, bld.building.res]));
 
+
+// elenco degli edifici gia costruiti
 const container = document.querySelector('#buildings');
 export const renderQueue = message => {
-    container.innerHTML = message.map(building => `<div class="building">${building.name} (${building.level})</div>`).join('');
+    container.innerHTML = message.map(building => {
+        let html = `<div class="building">${building.name} (${building.level})</div>`;
+        html += `<input type="text" value="${building.finish}">`;
+        return html;
+    }).join('');
 };
 
 const treeContainer = document.querySelector('[data-content="tree-info"]');
@@ -29,7 +35,6 @@ export const renderUI = message => {
     document.querySelector('#yid').value = message.id;
 
     const resourceMap = resourcesGrid(message);
-
     for (const { name } of message.buildings) {
         const divBuilding = createFromHTML(`<div class="building-item" data-building-name="${name}">${name}</div>`).firstChild;
 

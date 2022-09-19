@@ -57,13 +57,14 @@ connection.addEventListener('message', e => {
     let message = JSON.parse(e.data);
     if (available.includes(message.type)) {
         let orarioFineLavori = message.finishTime.fine;
-        events.emit('construction_requested', {
+        let dto = {
             orarioFineLavori: orarioFineLavori,
             type: message.type,
             secondiAllaFine: secondiAllaFine,
             queue: message.queue,
             endOfConstruction: message.finishTime,
-        });
+        };
+        events.emit('construction_requested', dto);
         queueOfStuff.push(() => {
             events.emit('construction_completed', yid);
         });
@@ -98,17 +99,20 @@ events.on('something_happened', message => {
         for (let q in message.queue) {
             let buildingName = message.queue[q].name;
             let buildingLevel = message.queue[q].level;
+            let finish = message.queue[q].finish;
             let isBuildingMissing = true;
             for (let b in builded) {
                 if (builded[b].name == buildingName) {
                     builded[b].level = buildingLevel;
+                    builded[b].finish = finish;
                     isBuildingMissing = false;
                 }
             }
             if (isBuildingMissing === true) {
                 builded.push({
                     name: message.queue[q].name,
-                    level: message.queue[q].level
+                    level: message.queue[q].level,
+                    finish: message.queue[q].finish,
                 });
             }
         }
