@@ -125,18 +125,48 @@ events.on('queue_refreshed', message => {
     client.renderQueue(message);
 });
 
+events.on('queue_refreshed', message => {
+    console.log('queue_refreshed', message)
+    for (let m in message) {
+        let b = message[m].finish.split(/\D+/);
+        let fin = (new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6]))).getTime()
+        let now = (new Date()).getTime()
+        let dto = {};
+        dto.diff = fin - now;
+        if (dto.diff/1000 > 0) {
+            orarioFineLavori = message[m].finish;
+        }
+    }
+});
+
+events.on('hide_box', message => {
+    let data = '[data-action="build_' + message.buildingName + '"]';
+    console.log('hide', message.buildingName);
+    document.querySelector(data).style.visibility = 'hidden';
+});
+
+events.on('show_box', message => {
+    let data = '[data-action="build_' + message.buildingName + '"]';
+    console.log('show', message.buildingName);
+    document.querySelector(data).style.visibility = 'visible';
+});
+
 events.on('something_happened', message => {
     for (let v in message.visibilities) {
         let buildingName = message.visibilities[v].name;
         let visible = message.visibilities[v].visible;
         let data = '[data-building-name="' + buildingName + '"]';
         if (document.querySelector(data) != null) {
+            let item = document.querySelector(data);
+            console.log(item.dataset);
             if (visible === false) {
-                document.querySelector(data).classList.add('hidden');
-                document.querySelector(data).classList.remove('visible');
+                events.emit('hide_box', { buildingName: item.dataset.buildingName });
+                item.classList.add('hidden');
+                item.classList.remove('visible');
             } else {
-                document.querySelector(data).classList.remove('hidden');
-                document.querySelector(data).classList.add('visible');
+                events.emit('show_box', { buildingName: item.dataset.buildingName });
+                item.classList.remove('hidden');
+                item.classList.add('visible');
             }
         }
     }
@@ -197,8 +227,8 @@ events.on('construction_requested', message => {
 
 events.on('construction_completed', message => {
     // @todo repeated code
-    let buttons = document.querySelectorAll('[data-button="builder"]');
-    buttons.forEach(item => (item.style.visibility = 'visible'));
+    // let buttons = document.querySelectorAll('[data-button="builder"]');
+    // buttons.forEach(item => (item.style.visibility = 'visible'));
 });
 
 events.on('construction_completed', message => {
@@ -250,6 +280,7 @@ events.on('connection_started', message => {
     let buttons = document.querySelectorAll('[data-button="builder"]');
     buttons.forEach(button => {
         button.addEventListener('click', event => {
+            console.log('click');
             // @todo repeated code
             buttons.forEach(item => (item.style.visibility = 'hidden'));
             let yid = document.querySelector('#yid').value;
@@ -261,6 +292,7 @@ events.on('connection_started', message => {
                 position: 42,
                 cookieYid: matches ? matches[2] : '@'
             };
+            console.log('send', dto)
             connection.send(JSON.stringify(dto));
         });
     });

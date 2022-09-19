@@ -10,7 +10,7 @@ const newDivResource = dto =>
     );
 
 const buildBuildingButton = dto =>
-    createFromHTML(`<button type="button" data-button="builder" data-action="build_${dto.name}">improve <i>🛠</i></button>`);
+    createFromHTML(`<button type="button" data-button="builder" data-action="build_${dto.name}" style="">improve <i>🛠</i></button>`);
 
 const buildContainer = child => createFromHTML(`<div class="building-level-container">current level: ${child}</div>`);
 
@@ -24,7 +24,6 @@ const container = document.querySelector('#buildings');
 export const renderQueue = message => {
     container.innerHTML = message.map(building => {
         let html = `<div class="building">${building.name} (${building.level})</div>`;
-        html += `<input type="text" value="${building.finish}">`;
         return html;
     }).join('');
 };
