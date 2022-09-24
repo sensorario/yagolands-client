@@ -140,7 +140,6 @@ events.on('something_happened', message => {
     for (const { name, visible } of message.visibilities) {
         const item = document.querySelector(`[data-building-name="${name}"]`);
         if (item) {
-            console.log(item.dataset);
             if (visible === false) {
                 events.emit('hide_box', { buildingName: name });
                 item.classList.add('hidden');
@@ -246,7 +245,6 @@ events.on('connection_started', message => {
     buttons.forEach(button => {
         // TODO: spostare nella parte UI
         button.addEventListener('click', event => {
-            console.log('click');
             // @todo repeated code
             buttons.forEach(item => (item.style.visibility = 'hidden'));
             const yid = document.querySelector('#yid').value;
