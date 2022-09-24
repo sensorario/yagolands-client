@@ -118,7 +118,7 @@ canvas.addEventListener('pointermove', ({ offsetX, offsetY }) => {
         }
     } else {
         const currentHover = cellAt(offsetX, offsetY);
-        if (!previousHover || currentHover.some((coord, index) => coord === previousHover[index])) {
+        if (!previousHover || currentHover.some((coord, index) => coord !== previousHover[index])) {
             if (previousHover) drawCell(...previousHover);
             drawCell(...currentHover, '#ddf');
             previousHover = currentHover;
