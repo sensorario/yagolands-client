@@ -1,11 +1,12 @@
 import { clock } from './modules/clock/clock.js';
-import { on, emit } from './modules/eventi/eventi.js';
+import { emit } from './modules/eventi/eventi.js';
+
+let secondiAllaFine = 0;
 
 const updateOrario = () => {
-    let now = new Date();
-    let dto = {
-        now: parseInt(now.getTime()),
-        ofl: (new Date(orarioFineLavori)).getTime(),
+    const dto = {
+        now: Date.now(),
+        ofl: new Date(orarioFineLavori).getTime()
     };
     dto.diff = dto.ofl - dto.now;
     dto.secondiAllaFine = dto.diff / 1000;
@@ -14,22 +15,17 @@ const updateOrario = () => {
 
 const updateCountDown = () => {
     if (--secondiAllaFine >= 0) {
-        document
-            .querySelector('.countdown')
-            .innerHTML = clock(secondiAllaFine);
+        document.querySelector('.countdown').textContent = clock(secondiAllaFine);
     }
 };
 
+const countdownWrapper = document.querySelector('.countdown-wrapper');
 const checkVisibility = () => {
     if (secondiAllaFine <= 0) {
-        document
-            .querySelector('.countdown-wrapper')
-            .style.visibility = 'hidden';
+        countdownWrapper.style.visibility = 'hidden';
         emit('coundown_completed');
     } else {
-        document
-            .querySelector('.countdown-wrapper')
-            .style.visibility = 'visible';
+        countdownWrapper.style.visibility = 'visible';
     }
 };
 
