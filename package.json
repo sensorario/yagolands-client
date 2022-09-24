@@ -4,13 +4,14 @@
         "fastify": "^4.3.0"
     },
     "scripts": {
-        "start": "node server.js"
+        "start": "nodemon server.js"
     },
     "name": "yagolands-client",
     "description": "This is just a very very very simple client created just to interact with the server that you can find here:",
     "version": "1.0.0",
     "main": "server.js",
     "devDependencies": {
+        "nodemon": "^2.0.20",
         "prettier": "^2.7.1"
     },
     "repository": {
