@@ -28,5 +28,5 @@
         "commandCenter.border": "#e7e7e799"
     },
     "peacock.color": "sienna",
-    "conventionalCommits.scopes": ["canvas"]
+    "conventionalCommits.scopes": ["canvas", "ui"]
 }
