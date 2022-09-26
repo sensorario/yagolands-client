@@ -125,6 +125,10 @@ canvas.addEventListener('pointermove', ({ offsetX, offsetY }) => {
         }
     }
 });
-canvas.addEventListener('wheel', ({ offsetX, offsetY, deltaY }) => {
-    zoomAt(offsetX, offsetY, 1.1 ** (deltaY / -150));
-});
+canvas.addEventListener(
+    'wheel',
+    ({ offsetX, offsetY, deltaY }) => {
+        zoomAt(offsetX, offsetY, 1.1 ** (deltaY / -150));
+    },
+    { passive: true }
+);

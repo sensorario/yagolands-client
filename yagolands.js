@@ -68,32 +68,7 @@ events.on('queue_refreshed', message => {
     }
 });
 
-events.on('hide_box', message => {
-    console.log('hide', message.buildingName);
-    document.querySelector(`[data-action="build_${message.buildingName}"]`).style.visibility = 'hidden';
-});
-
-events.on('show_box', message => {
-    console.log('show', message.buildingName);
-    document.querySelector(`[data-action="build_${message.buildingName}"]`).style.visibility = 'visible';
-});
-
 events.on('something_happened', message => {
-    for (const { name, visible } of message.visibilities) {
-        const item = document.querySelector(`[data-building-name="${name}"]`);
-        if (item) {
-            if (visible === false) {
-                events.emit('hide_box', { buildingName: name });
-                item.classList.add('hidden');
-                item.classList.remove('visible');
-            } else {
-                events.emit('show_box', { buildingName: name });
-                item.classList.remove('hidden');
-                item.classList.add('visible');
-            }
-        }
-    }
-
     const distincts = [];
     if (typeof message.tree !== 'undefined') {
         for (const b of message.tree.buildings) {

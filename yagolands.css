@@ -104,16 +104,11 @@ div#toolbar {
     border-width: 1px 0 0 1px;
     border-style: double;
     border-top-left-radius: var(--ui-corner-radius);
-    animation-name: expand;
-    animation-duration: 0.2s;
     overflow: hidden;
 }
 
-div#toolbar.reduced {
-    width: 350px;
-    border-top-left-radius: 15px;
-    animation-name: example;
-    animation-duration: 0.2s;
+div#toolbar.reduced .yid-container {
+    display: none;
 }
 
 ul.statistics {
@@ -132,22 +127,4 @@ ul.statistics > :first-child {
     background-color: var(--ui-color);
     padding: 10px;
     border-top-right-radius: var(--ui-corner-radius);
-}
-
-@keyframes example {
-    from {
-        width: 100%;
-    }
-    to {
-        width: 300px;
-    }
-}
-
-@keyframes expand {
-    from {
-        width: 300px;
-    }
-    to {
-        width: 100%;
-    }
 }

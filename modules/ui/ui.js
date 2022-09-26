@@ -2,6 +2,7 @@ import { html, render as htmlRender } from 'lit-html';
 import { clock } from '../clock/clock.js';
 import { counts, current, timers, tree } from '../state/world.js';
 import { render } from './canvas.js';
+import { buildBuilding } from '../actions/build.js';
 
 const newDivResource = ({ buildingName, resourceName, resourceAmount }) =>
     html`<div class="resource" data-id="${buildingName}-${resourceName}">${resourceName}: ${resourceAmount}</div>`;
@@ -87,7 +88,9 @@ export const renderHeader = () => {
             <li class="stat-item">clients(<span class="numberOfClients">${counts.clients}</span>)</li>
             <li class="stat-item">villages(<span class="numberOfVillages">${counts.villages}</span>)</li>
             <li class="stat-item">fields(<span class="numberOfFields">${counts.fields}</span>)</li>
-            <li class="stat-item">time(<span class="seconds">${clock(timers.uptime + (Date.now() - timers.uptimeTimestamp))}</span>)</li>
+            <li class="stat-item">
+                time(<span class="seconds">${clock(timers.uptime + (Date.now() - timers.uptimeTimestamp) / 1000)}</span>)
+            </li>
         </ul>`,
         headerContainer
     );

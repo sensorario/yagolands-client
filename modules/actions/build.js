@@ -1,4 +1,5 @@
 import { current } from '../state/world.js';
+import { send } from '../io/connection.js';
 
 /** @param {string} name */
 export const buildBuilding = name => {
@@ -12,5 +13,5 @@ export const buildBuilding = name => {
         cookieYid: matches?.[2] ?? '@'
     };
     console.log('send', dto);
-    connection.send(JSON.stringify(dto));
+    send(JSON.stringify(dto));
 };

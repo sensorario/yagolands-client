@@ -1,5 +1,6 @@
 import { emit } from '../eventi/eventi.js';
 import { available, current, queueOfStuff, tree } from '../state/world.js';
+import { renderUI } from '../ui/ui.js';
 
 const WEB_SOCKET_URL = 'ws://localhost:12345';
 const connection = new WebSocket(WEB_SOCKET_URL);
@@ -13,11 +14,14 @@ connection.addEventListener('message', event => {
     message.tree?.buildings?.forEach(({ name, building }) => {
         tree[name] = { ...tree[name], resources: building.res };
     });
-    message.visibilities?.forEach(({ name, visible }) => {
-        if (tree[name]) {
-            tree[name].visible = visible;
-        }
-    });
+    if (Array.isArray(message.visibilities)) {
+        message.visibilities.forEach(({ name, visible }) => {
+            if (tree[name]) {
+                tree[name].visible = visible;
+            }
+        });
+    }
+    renderUI();
 
     if (available.includes(message.type)) {
         const orarioFineLavori = message.finishTime.fine;
