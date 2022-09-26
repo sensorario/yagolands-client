@@ -2,9 +2,15 @@
     syntax: '<color>';
     inherits: true;
 }
+@property --ui-corner-radius {
+    syntax: '<length>';
+    inherits: true;
+    initial: 0px;
+}
 
 :root {
     --ui-color: brown;
+    --ui-corner-radius: 0.7rem;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
         sans-serif;
 }
@@ -25,11 +31,6 @@ main {
     flex-grow: 1;
     display: grid;
 }
-main > * {
-    grid-area: 1 / 1;
-    display: flex;
-    justify-content: space-between;
-}
 
 *,
 ::before,
@@ -38,6 +39,7 @@ main > * {
 }
 
 canvas {
+    grid-area: 1 / 1;
     width: 100%;
     height: 100%;
     cursor: grab;
@@ -46,21 +48,27 @@ canvas.panning {
     cursor: grabbing;
 }
 
-#topUI {
+#ui {
+    display: contents;
+}
+#ui > header {
     align-self: start;
     align-items: flex-start;
 }
-#bottomUI {
+#ui > footer {
     align-self: end;
     align-items: flex-end;
 }
 
-#topUI,
-#bottomUI {
+#ui > header,
+#ui > footer {
+    grid-area: 1 / 1;
+    display: flex;
+    justify-content: space-between;
     pointer-events: none;
 }
-#topUI > *,
-#bottomUI > * {
+#ui > header > *,
+#ui > footer > * {
     pointer-events: all;
 }
 
@@ -68,14 +76,6 @@ canvas.panning {
     display: flex;
     padding: 0.5rem;
     gap: 0.5rem;
-}
-
-.building-item.hidden {
-    visibility: hidden;
-    position: absolute;
-}
-.building-item.visible button {
-    visibility: visible;
 }
 
 .building-item {
@@ -88,7 +88,7 @@ canvas.panning {
 div#buildings {
     background-color: var(--ui-color);
     padding: 10px;
-    border-bottom-left-radius: 10px;
+    border-bottom-left-radius: var(--ui-corner-radius);
 }
 
 div#toolbar div {
@@ -100,10 +100,10 @@ div#toolbar {
     flex-direction: row;
     gap: 10px;
     background: var(--ui-color);
-    width: 100%;
     border-color: white;
     border-width: 1px 0 0 1px;
     border-style: double;
+    border-top-left-radius: var(--ui-corner-radius);
     animation-name: expand;
     animation-duration: 0.2s;
     overflow: hidden;
@@ -131,7 +131,7 @@ ul.statistics > :first-child {
 .countdown-wrapper {
     background-color: var(--ui-color);
     padding: 10px;
-    border-top-right-radius: 10px;
+    border-top-right-radius: var(--ui-corner-radius);
 }
 
 @keyframes example {

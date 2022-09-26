@@ -1,73 +1,36 @@
 // imports
-import { clock } from './modules/clock/clock.js';
 import * as events from './modules/eventi/eventi.js';
+import { send } from './modules/io/connection.js';
+import { available, buildingResources, counts, current, queueOfStuff, timers } from './modules/state/world.js';
 import { timing } from './modules/timing/timing.js';
-import * as client from './modules/ui/ui.js';
+import { renderHeader, renderQueue, renderUI } from './modules/ui/ui.js';
 
-// ...
-const queueOfStuff = [];
-const connection = new WebSocket('ws://localhost:12345');
-let buildingsRendered = false;
-let secondsFromTheBeginning = 0;
-const available = [];
-const buildingResources = [];
-
-const countdownContainer = document.querySelector('.countdown');
-const countdownProgress = document.querySelector('#countdown-progress');
-const gameTimeContainer = document.querySelector('.seconds');
-function time() {
-    secondsFromTheBeginning++;
-    if (secondiAllaFine >= 0) {
-        countdownContainer.textContent = clock(secondiAllaFine);
-        let value = countdownProgress.max;
-        let newMax = value;
-        if (newMax == 1) {
-            countdownProgress.max = secondiAllaFine;
-            newMax = secondiAllaFine;
-        }
-        countdownProgress.value = newMax - secondiAllaFine;
-    }
-    gameTimeContainer.textContent = clock(secondsFromTheBeginning);
-}
+const time = () => {
+    // TODO: ... rivedere
+    // if (secondiAllaFine >= 0) {
+    //     countdownContainer.textContent = clock(secondiAllaFine);
+    //     let value = countdownProgress.max;
+    //     let newMax = value;
+    //     if (newMax === 1) {
+    //         countdownProgress.max = secondiAllaFine;
+    //         newMax = secondiAllaFine;
+    //     }
+    //     countdownProgress.value = newMax - secondiAllaFine;
+    // }
+    renderHeader();
+};
 
 time();
 setInterval(time, 1000);
 
 // .. listeners
-connection.addEventListener('message', e => {
-    let message = JSON.parse(e.data);
-    if (available.includes(message.type)) {
-        const orarioFineLavori = message.finishTime.fine;
-        const dto = {
-            orarioFineLavori,
-            type: message.type,
-            secondiAllaFine: secondiAllaFine,
-            queue: message.queue,
-            endOfConstruction: message.finishTime
-        };
-        events.emit('construction_requested', dto);
-        queueOfStuff.push(() => {
-            events.emit('construction_completed', yid);
-        });
-    } else {
-        events.emit('something_happened', message);
-    }
-
-    if (typeof message.message != 'undefined') {
-        events.emit('connection_started', message);
-    }
-});
-
 events.on('id_received', message => {
     const matches = document.cookie.match(new RegExp('(^| )yid=([^;]+)'));
     const cookie = matches?.[2] ?? '@';
-    connection.send(
+    send(
         JSON.stringify({
             text: 'glue',
-            yid: {
-                client: message.id,
-                cookie: cookie
-            }
+            yid: { client: message.id, cookie }
         })
     );
     document.cookie = 'yid=' + message.id + ';';
@@ -76,34 +39,17 @@ events.on('id_received', message => {
 
 events.on('something_happened', message => {
     if (message.message.text === 'refresh_buildings') {
-        let built = [];
-        for (let q in message.queue) {
-            let buildingName = message.queue[q].name;
-            let buildingLevel = message.queue[q].level;
-            let finish = message.queue[q].finish;
-            let isBuildingMissing = true;
-            for (let b in built) {
-                if (built[b].name == buildingName) {
-                    built[b].level = buildingLevel;
-                    built[b].finish = finish;
-                    isBuildingMissing = false;
-                }
-            }
-            if (isBuildingMissing === true) {
-                built.push({
-                    name: message.queue[q].name,
-                    level: message.queue[q].level,
-                    finish: message.queue[q].finish
-                });
-            }
+        const builtMap = {};
+        for (const { name, level, finish } of message.queue ?? []) {
+            builtMap[name] = { ...builtMap[name], level, finish };
         }
 
-        events.emit('queue_refreshed', built);
+        events.emit('queue_refreshed', Object.values(builtMap));
     }
 });
 
 events.on('queue_refreshed', message => {
-    client.renderQueue(message);
+    renderQueue(message);
 });
 
 events.on('queue_refreshed', message => {
@@ -132,10 +78,6 @@ events.on('show_box', message => {
     document.querySelector(`[data-action="build_${message.buildingName}"]`).style.visibility = 'visible';
 });
 
-const divOfClients = document.querySelector('.numberOfClients');
-const divOfVillages = document.querySelector('.numberOfVillages');
-const divOfFields = document.querySelector('.numberOfFields');
-const divOfSeconds = document.querySelector('.seconds');
 events.on('something_happened', message => {
     for (const { name, visible } of message.visibilities) {
         const item = document.querySelector(`[data-building-name="${name}"]`);
@@ -177,31 +119,29 @@ events.on('something_happened', message => {
         }
     }
 
-    const { numberOfClients, numberOfVillages, numberOfFields } = message;
+    counts.clients = message.numberOfClients;
+    counts.villages = message.numberOfVillages;
+    counts.fields = message.numberOfFields;
 
-    secondsFromTheBeginning = message.rawseconds;
-
-    divOfClients.textContent = numberOfClients;
-    divOfVillages.textContent = numberOfVillages;
-    divOfFields.textContent = numberOfFields;
-    divOfSeconds.textContent = clock(secondsFromTheBeginning);
+    timers.uptimeTimestamp = Date.now();
+    timers.uptime = message.rawseconds;
+    renderHeader();
 });
 
 events.on('construction_requested', message => {
     // TODO: cosa succede qui?
     // let fine = new Date(message.queue.rawFinish);
-    orarioFineLavori = message.orarioFineLavori;
+    // orarioFineLavori = message.orarioFineLavori;
 });
 
 events.on('construction_completed', message => {
-    // @todo repeated code
-    // let buttons = document.querySelectorAll('[data-button="builder"]');
-    // buttons.forEach(item => (item.style.visibility = 'visible'));
+    current.building = null;
+    renderUI();
 });
 
 events.on('construction_completed', message => {
     const matches = document.cookie.match(new RegExp('(^| )yid=([^;]+)'));
-    connection.send(
+    send(
         JSON.stringify({
             text: 'refresh_buildings',
             yid: message.yid,
@@ -221,10 +161,6 @@ events.on('coundown_completed', () => {
 });
 
 events.on('connection_started', message => {
-    if (buildingsRendered) {
-        return;
-    }
-
     for (const resource of message.tree.buildings[0].building.res) {
         buildingResources.push(resource);
     }
@@ -233,44 +169,8 @@ events.on('connection_started', message => {
         available.push(`build_${name}`);
     }
 
-    client.renderUI(message);
-
-    for (const { name, visible } of message.visibilities) {
-        if (visible === false) {
-            document.querySelector(`[data-building-name="${name}"]`).classList.add('hidden');
-        }
-    }
-
-    const buttons = document.querySelectorAll('[data-button="builder"]');
-    buttons.forEach(button => {
-        // TODO: spostare nella parte UI
-        button.addEventListener('click', event => {
-            // @todo repeated code
-            buttons.forEach(item => (item.style.visibility = 'hidden'));
-            const yid = document.querySelector('#yid').value;
-            const matches = document.cookie.match(new RegExp('(^| )yid=([^;]+)'));
-            const dto = {
-                text: event.target.dataset.action,
-                to: yid,
-                yid,
-                position: 42,
-                cookieYid: matches?.[2] ?? '@'
-            };
-            console.log('send', dto);
-            connection.send(JSON.stringify(dto));
-        });
-    });
-
-    buildingsRendered = true;
+    renderUI();
 });
-
-function send(data) {
-    if (connection.readyState === WebSocket.OPEN) {
-        connection.send(data);
-    } else {
-        console.error('not connected');
-    }
-}
 
 setTimeout(() => {
     const matches = document.cookie.match(new RegExp('(^| )yid=([^;]+)'));
@@ -283,9 +183,3 @@ setTimeout(() => {
         })
     );
 }, 1000);
-
-const buttonToolbar = document.querySelector('div#toolbar button');
-buttonToolbar.addEventListener('click', event => {
-    event.target.parentElement.parentElement.classList.toggle('visible');
-    event.target.parentElement.parentElement.classList.toggle('reduced');
-});
