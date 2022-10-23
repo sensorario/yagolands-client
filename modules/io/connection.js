@@ -1,6 +1,5 @@
 import { emit } from '../eventi/eventi.js';
 import { available, current, queueOfStuff, tree } from '../state/world.js';
-import { renderUI } from '../ui/ui.js';
 
 const WEB_SOCKET_URL = 'ws://localhost:12345';
 const connection = new WebSocket(WEB_SOCKET_URL);
@@ -21,7 +20,6 @@ connection.addEventListener('message', event => {
             }
         });
     }
-    renderUI();
 
     if (available.includes(message.type)) {
         const orarioFineLavori = message.finishTime.fine;

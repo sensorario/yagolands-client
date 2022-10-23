@@ -3,7 +3,7 @@ import * as events from './modules/eventi/eventi.js';
 import { send } from './modules/io/connection.js';
 import { available, buildingResources, counts, current, queueOfStuff, timers } from './modules/state/world.js';
 import { timing } from './modules/timing/timing.js';
-import { renderHeader, renderQueue, renderUI } from './modules/ui/ui.js';
+import { renderHeader, renderQueue } from './modules/ui/ui.js';
 
 const time = () => {
     // TODO: ... rivedere
@@ -100,7 +100,6 @@ events.on('something_happened', message => {
 
     timers.uptimeTimestamp = Date.now();
     timers.uptime = message.rawseconds;
-    renderHeader();
 });
 
 events.on('construction_requested', message => {
@@ -111,7 +110,6 @@ events.on('construction_requested', message => {
 
 events.on('construction_completed', message => {
     current.building = null;
-    renderUI();
 });
 
 events.on('construction_completed', message => {
@@ -143,8 +141,6 @@ events.on('connection_started', message => {
     for (const { name } of message.buildings) {
         available.push(`build_${name}`);
     }
-
-    renderUI();
 });
 
 setTimeout(() => {

@@ -1,8 +1,9 @@
 import { html, render as htmlRender } from 'lit-html';
+import { buildBuilding } from '../actions/build.js';
 import { clock } from '../clock/clock.js';
+import { onChange } from '../state/utils.js';
 import { counts, current, timers, tree } from '../state/world.js';
 import { render } from './canvas.js';
-import { buildBuilding } from '../actions/build.js';
 
 const newDivResource = ({ buildingName, resourceName, resourceAmount }) =>
     html`<div class="resource" data-id="${buildingName}-${resourceName}">${resourceName}: ${resourceAmount}</div>`;
@@ -79,6 +80,8 @@ const toggleToolbar = () => {
     reduced = !reduced;
     renderUI();
 };
+current[onChange](renderUI);
+tree[onChange](renderUI);
 
 const headerContainer = document.querySelector('body > header');
 export const renderHeader = () => {
@@ -95,3 +98,5 @@ export const renderHeader = () => {
         headerContainer
     );
 };
+counts[onChange](renderHeader);
+timers[onChange](renderHeader);
